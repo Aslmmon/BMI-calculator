@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="movies_title">Functionality 1 ( Pagination  )</string>
+    <string name="input_app_title">Functionality 2 (UpperCase View )</string>
+    <string name="password_generator">Functionality 3 (Pass. Generator)</string>
+    <string name="fit_form_bmi">FitForm BMI</string>
+</resources>

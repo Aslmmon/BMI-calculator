@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strRetry">Retry</string>
+    <string name="strFetchingDataFromServer">fetching</string>
+    <string name="search_placeholder">Search here</string>
+    <string name="enter_text">Search here</string>
+    <string name="release_date">release date :</string>
+    <string name="no_data_retrieved">No Data Retrieved</string>
+</resources>
