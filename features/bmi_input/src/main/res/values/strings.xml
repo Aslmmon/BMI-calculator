@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="enter_text">Enter text here</string>
+    <string name="bmi_calculator_title">BMI Calculator</string>
+    <string name="gender_title">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">female</string>
 </resources>
