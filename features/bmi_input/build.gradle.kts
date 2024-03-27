@@ -51,5 +51,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(project(":core:domain"))
+    implementation( "com.chargemap.compose:numberpicker:1.0.3")
 
 }

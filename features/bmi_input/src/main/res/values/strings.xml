@@ -5,4 +5,6 @@
     <string name="gender_title">Gender</string>
     <string name="male">Male</string>
     <string name="female">female</string>
+    <string name="height">Height (cm)</string>
+    <string name="age_title">Age</string>
 </resources>
