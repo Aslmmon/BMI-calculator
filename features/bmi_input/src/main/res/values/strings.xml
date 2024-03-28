@@ -7,4 +7,5 @@
     <string name="female">female</string>
     <string name="height">Height (cm)</string>
     <string name="age_title">Age</string>
+    <string name="weight">Weight</string>
 </resources>

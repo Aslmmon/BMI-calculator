@@ -3,12 +3,12 @@ package com.ontop.inputapp.shared_ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,8 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @Composable
@@ -80,8 +78,8 @@ fun RoundedCardView(modifier: Modifier, content: @Composable () -> Unit) {
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
         ),
-        border = BorderStroke(1.dp,Color.Gray),
-        shape = RoundedCornerShape(20.dp), // Set the corner radius
+        border = BorderStroke(0.1.dp, Color.Gray.copy(alpha = 0.8f)),
+        shape = RoundedCornerShape(10.dp), // Set the corner radius
     ) {
 
         content()
@@ -93,7 +91,7 @@ fun RoundedCardView(modifier: Modifier, content: @Composable () -> Unit) {
 @Composable
 fun GenderView(modifier: Modifier, icon: Int, genderText: String) {
     Column(
-        modifier = modifier.size(150.dp,120.dp),
+        modifier = modifier.padding(horizontal = 50.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -117,9 +115,7 @@ fun SVGloader(modifier: Modifier = Modifier, iconResource: Int, iconDesc: String
 @Composable
 fun AgeView(modifier: Modifier, minusIcon: Int, plusIcon: Int) {
     Row(
-        modifier = modifier
-            .padding(horizontal = 25.dp, vertical = 10.dp)
-            .size(80.dp, 50.dp),
+        modifier = modifier,
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -173,11 +169,10 @@ fun NumberPickers(
 }
 
 
-
 @Composable
 fun HeightView(
     modifier: Modifier,
-    height: Int,
+    height: Boolean,
     state: LazyListState,
     index: Int,
 ) {
@@ -207,7 +202,60 @@ fun HeightView(
         )
     }
 
-//    Text(text = "${state.firstVisibleItemIndex} + ${index}")
+
+}
 
 
+@Composable
+fun HeightViewNew(
+    modifier: Modifier,
+    isSameIndex: Boolean,
+    item: Int,
+) {
+    Column(modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = item.toString(),
+            textAlign = TextAlign.Start,
+            fontWeight = if (isSameIndex) FontWeight.Bold else FontWeight.Light
+        )
+        _gap(height = 30)
+        Divider(
+            color = if (isSameIndex) Color.Blue else Color.Gray,
+            modifier = Modifier
+                .height(if (isSameIndex) 30.dp else 20.dp)
+                .width(if (isSameIndex) 3.dp else 1.dp)
+        )
+    }
+
+
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun <T> ScrollableRowList(
+    modifier: Modifier,
+    content: @Composable (Boolean,T) -> Unit,
+    lists: List<T>
+) {
+    val state = rememberLazyListState()
+    val centerItemIndex by remember {
+        derivedStateOf {
+            val layoutInfo = state.layoutInfo
+            val visibleItems = layoutInfo.visibleItemsInfo
+            val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+
+            visibleItems.minByOrNull { abs((it.offset + it.size / 2) - viewportCenter) }?.index ?: 0
+        }
+    }
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        state = state,
+        flingBehavior = rememberSnapFlingBehavior(lazyListState = state)
+    ) {
+        itemsIndexed(lists) { index, item ->
+            val isItemCenterd = centerItemIndex == index
+            content.invoke(isItemCenterd,item)
+        }
+
+    }
 }
