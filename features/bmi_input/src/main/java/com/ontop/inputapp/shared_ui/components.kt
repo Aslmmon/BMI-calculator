@@ -1,5 +1,6 @@
 package com.ontop.inputapp.shared_ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -18,25 +19,27 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 @Composable
 fun TitleScreen(modifier: Modifier = Modifier, title: String) {
@@ -74,7 +77,11 @@ fun _gap(height: Int = 10) = Spacer(modifier = Modifier.height(height.dp))
 fun RoundedCardView(modifier: Modifier, content: @Composable () -> Unit) {
     Card(
         modifier = modifier.wrapContentSize(),
-        shape = RoundedCornerShape(16.dp), // Set the corner radius
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+        ),
+        border = BorderStroke(1.dp,Color.Gray),
+        shape = RoundedCornerShape(20.dp), // Set the corner radius
     ) {
 
         content()
@@ -86,14 +93,13 @@ fun RoundedCardView(modifier: Modifier, content: @Composable () -> Unit) {
 @Composable
 fun GenderView(modifier: Modifier, icon: Int, genderText: String) {
     Column(
-        modifier = modifier.padding(50.dp),
+        modifier = modifier.size(150.dp,120.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        SVGloader(modifier = modifier.size(50.dp, 50.dp), iconResource = icon)
-        _gap(20)
-        Text(text = genderText, style = MaterialTheme.typography.titleSmall)
+        SVGloader(modifier = modifier.size(30.dp, 50.dp), iconResource = icon)
+        Text(text = genderText)
     }
 
 }
@@ -137,7 +143,7 @@ fun NumberPickers(
 ) {
     val scrollState = rememberLazyListState(initialIndex)
     val coroutineScope = rememberCoroutineScope()
-    val center = remember {   scrollState.layoutInfo  }.viewportEndOffset / 2
+    val center = remember { scrollState.layoutInfo }.viewportEndOffset / 2
 
     Column {
         LazyRow(
@@ -165,15 +171,43 @@ fun NumberPickers(
     }
 
 }
-fun LazyListState.animateScrollAndCentralizeItem(index: Int, scope: CoroutineScope) {
-    val itemInfo = this.layoutInfo.visibleItemsInfo.firstOrNull { it.index == index }
-    scope.launch {
-        if (itemInfo != null) {
-            val center = this@animateScrollAndCentralizeItem.layoutInfo.viewportEndOffset / 2
-            val childCenter = itemInfo.offset + itemInfo.size / 2
-            this@animateScrollAndCentralizeItem.animateScrollBy((childCenter - center).toFloat())
-        } else {
-            this@animateScrollAndCentralizeItem.animateScrollToItem(index)
+
+
+
+@Composable
+fun HeightView(
+    modifier: Modifier,
+    height: Int,
+    state: LazyListState,
+    index: Int,
+) {
+    val centerItemIndex by remember {
+        derivedStateOf {
+            val layoutInfo = state.layoutInfo
+            val visibleItems = layoutInfo.visibleItemsInfo
+            val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+
+            visibleItems.minByOrNull { abs((it.offset + it.size / 2) - viewportCenter) }?.index ?: 0
         }
     }
+    var isItemCenterd = centerItemIndex == index
+
+    Column(modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = height.toString(),
+            textAlign = TextAlign.Start,
+            fontWeight = if (isItemCenterd) FontWeight.Bold else FontWeight.Light
+        )
+        _gap(height = 30)
+        Divider(
+            color = if (isItemCenterd) Color.Blue else Color.Gray,
+            modifier = Modifier
+                .height(if (isItemCenterd) 30.dp else 20.dp)
+                .width(if (isItemCenterd) 3.dp else 1.dp)
+        )
+    }
+
+//    Text(text = "${state.firstVisibleItemIndex} + ${index}")
+
+
 }
