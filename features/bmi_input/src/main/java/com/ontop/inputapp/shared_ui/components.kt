@@ -1,6 +1,5 @@
 package com.ontop.inputapp.shared_ui
 
-import android.widget.Button
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -22,7 +21,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,7 +35,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -74,7 +71,7 @@ fun ContentWithTitle(
 }
 
 @Composable
-fun _gap(height: Int = 10) = Spacer(modifier = Modifier.height(height.dp))
+fun _gap(height: Int = 5) = Spacer(modifier = Modifier.height(height.dp))
 
 @Composable
 fun RoundedCardView(modifier: Modifier, content: @Composable () -> Unit) {
@@ -86,19 +83,19 @@ fun RoundedCardView(modifier: Modifier, content: @Composable () -> Unit) {
         border = BorderStroke(0.1.dp, Color.Gray.copy(alpha = 0.8f)),
         shape = RoundedCornerShape(10.dp), // Set the corner radius
     ) {
-
-        content()
-
+        content.invoke()
     }
 }
+
+
 
 
 @Composable
 fun GenderView(modifier: Modifier, icon: Int, genderText: String) {
     Column(
-        modifier = modifier.padding(horizontal = 50.dp, vertical = 20.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier.size(150.dp,150.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
 
     ) {
         SVGloader(modifier = modifier.size(30.dp, 50.dp), iconResource = icon)
@@ -134,81 +131,6 @@ fun AgeView(modifier: Modifier, minusIcon: Int, plusIcon: Int) {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun NumberPickers(
-    modifier: Modifier,
-    numbers: List<Int>,
-    initialIndex: Int = 5,
-    onNumberSelected: (Int) -> Unit
-) {
-    val scrollState = rememberLazyListState(initialIndex)
-    val coroutineScope = rememberCoroutineScope()
-    val center = remember { scrollState.layoutInfo }.viewportEndOffset / 2
-
-    Column {
-        LazyRow(
-            modifier = modifier.padding(20.dp),
-            state = scrollState,
-            flingBehavior = rememberSnapFlingBehavior(lazyListState = scrollState)
-
-        ) {
-            itemsIndexed(numbers) { index, number ->
-                Text(
-                    text = number.toString(),
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .clickable {
-                            //                        onNumberSelected(number)
-                            //                        coroutineScope.launch {
-                            //                            scrollState.animateScrollAndCentralizeItem(index , this)
-                            //                        }
-                        }
-                )
-            }
-        }
-        Text(text = "${scrollState.firstVisibleItemIndex}")
-    }
-
-}
-
-
-@Composable
-fun HeightView(
-    modifier: Modifier,
-    height: Boolean,
-    state: LazyListState,
-    index: Int,
-) {
-    val centerItemIndex by remember {
-        derivedStateOf {
-            val layoutInfo = state.layoutInfo
-            val visibleItems = layoutInfo.visibleItemsInfo
-            val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
-
-            visibleItems.minByOrNull { abs((it.offset + it.size / 2) - viewportCenter) }?.index ?: 0
-        }
-    }
-    var isItemCenterd = centerItemIndex == index
-
-    Column(modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = height.toString(),
-            textAlign = TextAlign.Start,
-            fontWeight = if (isItemCenterd) FontWeight.Bold else FontWeight.Light
-        )
-        _gap(height = 30)
-        Divider(
-            color = if (isItemCenterd) Color.Blue else Color.Gray,
-            modifier = Modifier
-                .height(if (isItemCenterd) 30.dp else 20.dp)
-                .width(if (isItemCenterd) 3.dp else 1.dp)
-        )
-    }
-
-
-}
 
 
 @Composable
