@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,12 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ontop.inputapp.R
 import com.ontop.inputapp.shared_ui.AgeView
+import com.ontop.inputapp.shared_ui.BMIButton
 import com.ontop.inputapp.shared_ui.ContentWithTitle
 import com.ontop.inputapp.shared_ui.GenderView
 import com.ontop.inputapp.shared_ui.HeightViewNew
 import com.ontop.inputapp.shared_ui.RoundedCardView
 import com.ontop.inputapp.shared_ui.ScrollableRowList
 import com.ontop.inputapp.shared_ui.TitleScreen
+import com.ontop.inputapp.shared_ui._gap
 
 
 @Composable
@@ -38,12 +42,12 @@ fun BmiInputScreen(
     modifier: Modifier = Modifier,
     upperCaseInputViewModel: UpperCaseInputViewModel = hiltViewModel()
 ) {
-    val (height, setHeight) = remember { mutableStateOf(160) }
-    var pickerValue by remember { mutableStateOf(50) }
-    var context = LocalContext.current
+    var scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier.padding(horizontal = 10.dp)
+        modifier = modifier
+            .padding(horizontal = 10.dp)
+            .verticalScroll(scrollState)
     ) {
         TitleScreen(modifier, stringResource(id = R.string.bmi_calculator_title))
         ContentWithTitle(title = stringResource(R.string.gender_title)) {
@@ -70,10 +74,11 @@ fun BmiInputScreen(
 
         ContentWithTitle(title = stringResource(R.string.height)) {
             RoundedCardView(modifier = modifier) {
-                var lists = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 23, 45, 12, 12, 12, 14, 13, 14)
+                var lists =
+                    listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 23, 45, 12, 12, 12, 14, 13, 14)
 
-                ScrollableRowList(modifier = modifier, content = { isSameIndex ,item->
-                    HeightViewNew(modifier, isSameIndex,item)
+                ScrollableRowList(modifier = modifier, content = { isSameIndex, item ->
+                    HeightViewNew(modifier, isSameIndex, item)
 
                 }, lists = lists)
 
@@ -85,7 +90,9 @@ fun BmiInputScreen(
             ContentWithTitle(modifier = modifier, title = stringResource(R.string.age_title)) {
                 RoundedCardView(modifier = modifier) {
                     AgeView(
-                        modifier = modifier.padding(5.dp).height(50.dp),
+                        modifier = modifier
+                            .padding(5.dp)
+                            .height(50.dp),
                         minusIcon = R.drawable.minus,
                         plusIcon = R.drawable.plus
                     )
@@ -93,20 +100,37 @@ fun BmiInputScreen(
 
             }
             Spacer(modifier = modifier.width(50.dp))
-            ContentWithTitle(title = stringResource(R.string.weight), modifier = modifier.padding(horizontal = 10.dp)) {
+            ContentWithTitle(
+                title = stringResource(R.string.weight),
+                modifier = modifier.padding(horizontal = 10.dp)
+            ) {
                 RoundedCardView(modifier = modifier) {
-                    var lists = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 23, 45, 12, 12, 12, 14, 13, 14)
+                    var lists =
+                        listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 23, 45, 12, 12, 12, 14, 13, 14)
 
-                    ScrollableRowList(modifier = modifier.size(150.dp,60.dp), content = { isSameIndex ,item->
-                        Text(modifier=modifier.padding(horizontal = 20.dp, vertical = 20.dp),text = item.toString(),
-                            fontWeight = if (isSameIndex) FontWeight.Bold else FontWeight.Light
-                        )
-                    }, lists = lists)
+                    ScrollableRowList(
+                        modifier = modifier.size(150.dp, 60.dp),
+                        content = { isSameIndex, item ->
+                            Text(
+                                modifier = modifier.padding(horizontal = 20.dp, vertical = 20.dp),
+                                text = item.toString(),
+                                fontWeight = if (isSameIndex) FontWeight.Bold else FontWeight.Light
+                            )
+                        },
+                        lists = lists
+                    )
 
                 }
             }
 
         }
+        _gap(20)
+        BMIButton(
+            modifier = modifier.fillMaxWidth(),
+            stringResource(R.string.calculate_bmi),
+            onClick = {
+
+            })
     }
 }
 

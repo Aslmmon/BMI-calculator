@@ -1,5 +1,6 @@
 package com.ontop.inputapp.shared_ui
 
+import android.widget.Button
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -20,6 +21,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -33,6 +37,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -234,7 +239,7 @@ fun HeightViewNew(
 @Composable
 fun <T> ScrollableRowList(
     modifier: Modifier,
-    content: @Composable (Boolean,T) -> Unit,
+    content: @Composable (Boolean, T) -> Unit,
     lists: List<T>
 ) {
     val state = rememberLazyListState()
@@ -254,8 +259,19 @@ fun <T> ScrollableRowList(
     ) {
         itemsIndexed(lists) { index, item ->
             val isItemCenterd = centerItemIndex == index
-            content.invoke(isItemCenterd,item)
+            content.invoke(isItemCenterd, item)
         }
 
+    }
+}
+
+
+@Composable
+fun BMIButton(modifier: Modifier, text: String, onClick: () -> Unit) {
+    Button(modifier=modifier,onClick = onClick,colors= ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onPrimary),
+        shape = RoundedCornerShape(12.dp)) {
+        Text(text = text, fontWeight = FontWeight.Bold)
     }
 }
