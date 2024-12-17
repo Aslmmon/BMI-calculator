@@ -4,12 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ontop.home.navigation.SPLASH_ROUTE
-import com.ontop.home.navigation.splash
-import com.ontop.inputapp.navigation.bmiInputScreen
-import com.ontop.inputapp.navigation.navigateToBmiInputScreen
+import com.ontop.home.ui.SplashScreen
+import com.ontop.inputapp.ui.BmiInputScreen
 
+const val SPLASH_ROUTE = "splashroute"
+const val bmiInput_Route = "bmiInput"
 
 @Composable
 fun FitFormNavHost(
@@ -22,12 +23,21 @@ fun FitFormNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        splash(
-            onNavigateToNextScreen = {
-                navController.navigateToBmiInputScreen()
-            },
-        )
-        bmiInputScreen()
+
+        composable(
+            route = SPLASH_ROUTE,
+        ) {
+            SplashScreen(modifier, onNavigateToNextScreen = {
+                navController.navigate(bmiInput_Route)
+            })
+        }
+        composable(
+            route = bmiInput_Route
+        ) {
+
+            BmiInputScreen()
+        }
+
 
     }
 }

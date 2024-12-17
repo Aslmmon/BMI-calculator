@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp.logging)
     implementation(libs.retrofit.core)
+    implementation (libs.retrofit.square)
     implementation(libs.retrofit.kotlin.serialization)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -61,7 +62,6 @@ dependencies {
     api(libs.hilt.android)
     api (libs.androidx.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
-    implementation (libs.retrofit.square)
 
 
 }

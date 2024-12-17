@@ -18,8 +18,6 @@
             <option value="$PROJECT_DIR$/core/network" />
             <option value="$PROJECT_DIR$/features" />
             <option value="$PROJECT_DIR$/features/bmi_input" />
-            <option value="$PROJECT_DIR$/features/paginatedMasterDetail" />
-            <option value="$PROJECT_DIR$/features/passwordGenerator" />
             <option value="$PROJECT_DIR$/features/splash" />
           </set>
         </option>

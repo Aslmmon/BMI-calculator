@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="password_length">password length</string>
-    <string name="include_uppercase_letters">Include Uppercase Letters</string>
-    <string name="include_numbers">Include Numbers</string>
-    <string name="include_symbols">Include Symbols</string>
-    <string name="generate_password">Generate Password</string>
-</resources>
