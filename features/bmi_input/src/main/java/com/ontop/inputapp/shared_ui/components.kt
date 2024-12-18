@@ -76,17 +76,16 @@ fun ContentWithTitle(
         Text(
             text = title,
             textAlign = TextAlign.Center,
-            modifier = modifier.padding(16.dp),
+            modifier = modifier.padding( vertical = 15.dp),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.titleSmall
         )
-        _gap()
         content.invoke()
     }
 }
 
 @Composable
-fun _gap(height: Int = 5) = Spacer(modifier = Modifier.height(height.dp))
+fun _gap(height: Int = 10) = Spacer(modifier = Modifier.height(height.dp))
 
 @Composable
 fun RoundedCardView(modifier: Modifier, content: @Composable () -> Unit) {
@@ -122,7 +121,6 @@ fun GenderView(
                 MutableInteractionSource()
             }) {
                 onGenderClicked.invoke()
-
             }
             .clip(RoundedCornerShape(11.dp))
             .background(if (isGenderSelected) MaterialTheme.colorScheme.secondary else Color.White)
@@ -134,7 +132,7 @@ fun GenderView(
             modifier = modifier
                 .height(60.dp)
                 .width(150.dp)
-                .fillMaxSize(),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
             Text(

@@ -53,17 +53,7 @@ fun BmiInputScreen(
         }
 
 
-        ContentWithTitle(title = stringResource(R.string.weight)) {
-            RoundedCardView(modifier = modifier) {
-                var lists =
-                    listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 23, 45, 12, 12, 12, 14, 13, 14)
-
-                ScrollableRowList(modifier = modifier, content = { isSameIndex, item ->
-                    HeightViewNew(modifier, isSameIndex, item)
-
-                }, lists = lists)
-
-            }
+        ContentWithTitle(title = stringResource(R.string.height)) {
 
         }
 
@@ -102,3 +92,13 @@ fun ShowBMiInputScreen() {
     BmiInputScreen()
 }
 
+//RoundedCardView(modifier = modifier) {
+//    var lists =
+//        listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 23, 45, 12, 12, 12, 14, 13, 14)
+//
+//    ScrollableRowList(modifier = modifier, content = { isSameIndex, item ->
+//        HeightViewNew(modifier, isSameIndex, item)
+//
+//    }, lists = lists)
+//
+//}
