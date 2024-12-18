@@ -18,21 +18,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Colors
 import androidx.compose.material.Divider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -44,7 +47,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.ontop.inputapp.ui.gender
+import com.ontop.ageList
+import com.ontop.gender
 import kotlin.math.abs
 
 @Composable
@@ -67,12 +71,14 @@ fun ContentWithTitle(
     content: @Composable () -> Unit
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
     ) {
         Text(
             text = title,
+            textAlign = TextAlign.Center,
             modifier = modifier.padding(16.dp),
-            style = MaterialTheme.typography.titleMedium
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleSmall
         )
         _gap()
         content.invoke()
@@ -231,6 +237,51 @@ fun <T> ScrollableRowList(
         itemsIndexed(lists) { index, item ->
             val isItemCenterd = centerItemIndex == index
             content.invoke(isItemCenterd, item)
+        }
+
+    }
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun AgeContent(modifier: Modifier = Modifier) {
+    val listState = rememberLazyListState()
+    LaunchedEffect(Unit) {
+        listState.scrollToItem(0, 10)
+    }
+    Box(
+        modifier = Modifier
+            .border(
+                width = 0.5.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(10.dp)
+            )
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(11.dp)),
+        contentAlignment = Alignment.Center // Center content of the Box
+
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            Icon(
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = "Play",
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = modifier.size(24.dp)
+            )
+            LazyColumn(
+                modifier = Modifier.height(100.dp),
+                state = listState,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
+            ) {
+                itemsIndexed(ageList) { index, numbers ->
+                    Text("$numbers", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, modifier = Modifier.padding(5.dp))
+                }
+            }
         }
 
     }
