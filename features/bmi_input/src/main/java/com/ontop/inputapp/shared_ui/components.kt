@@ -372,12 +372,13 @@ fun WeightContent(modifier: Modifier = Modifier) {
 @Composable
 fun BMIButton(modifier: Modifier, text: String, onClick: () -> Unit) {
     Button(
-        modifier = modifier, onClick = onClick, colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.background,
+        modifier = modifier.height(60.dp),
+        onClick = onClick, colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(5.dp)
     ) {
-        Text(text = text, fontWeight = FontWeight.Bold)
+        Text(text = text, fontWeight = FontWeight.Normal)
     }
 }

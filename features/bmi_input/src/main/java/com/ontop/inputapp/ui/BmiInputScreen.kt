@@ -1,7 +1,9 @@
 package com.ontop.inputapp.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -13,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,9 +28,6 @@ import com.ontop.inputapp.shared_ui.BMIButton
 import com.ontop.inputapp.shared_ui.ContentWithTitle
 import com.ontop.inputapp.shared_ui.GenderView
 import com.ontop.inputapp.shared_ui.HeightContent
-import com.ontop.inputapp.shared_ui.HeightViewNew
-import com.ontop.inputapp.shared_ui.RoundedCardView
-import com.ontop.inputapp.shared_ui.ScrollableRowList
 import com.ontop.inputapp.shared_ui.TitleScreen
 import com.ontop.inputapp.shared_ui.WeightContent
 import com.ontop.inputapp.shared_ui._gap
@@ -63,14 +63,23 @@ fun BmiInputScreen(
             WeightContent()
         }
 
-        _gap(20)
-        BMIButton(
-            modifier = modifier.fillMaxWidth(),
-            stringResource(R.string.calculate_bmi),
-            onClick = {
 
-            })
     }
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(horizontal = 10.dp, vertical = 5.dp)) {
+        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+            BMIButton(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .align(Alignment.End),
+                stringResource(R.string.calculate_bmi),
+                onClick = {
+
+                })
+        }
+    }
+
 }
 
 @Composable
