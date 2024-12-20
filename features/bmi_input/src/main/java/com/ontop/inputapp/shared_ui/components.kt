@@ -14,13 +14,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -28,7 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -40,7 +39,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,7 +62,7 @@ import kotlin.math.abs
 fun TitleScreen(modifier: Modifier = Modifier, title: String) {
     Text(
         text = title,
-        color = MaterialTheme.colorScheme.primary,
+        color = MaterialTheme.colorScheme.surface,
         modifier = modifier
             .padding(16.dp)
             .fillMaxWidth(),
@@ -82,8 +84,9 @@ fun ContentWithTitle(
             text = title,
             textAlign = TextAlign.Center,
             modifier = modifier.padding(vertical = 15.dp),
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleSmall
+            color = MaterialTheme.colorScheme.surface,
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.SemiBold
         )
         content.invoke()
     }
@@ -175,23 +178,6 @@ fun SVGloader(
 
 
 @Composable
-fun AgeView(modifier: Modifier, minusIcon: Int, plusIcon: Int) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        SVGloader(modifier = modifier.size(20.dp), iconResource = minusIcon)
-        Spacer(modifier = modifier.width(10.dp))
-        Text(text = "22", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
-        Spacer(modifier = modifier.width(10.dp))
-        SVGloader(modifier = modifier.size(20.dp), iconResource = plusIcon)
-
-    }
-}
-
-
-@Composable
 fun HeightViewNew(
     modifier: Modifier,
     isSameIndex: Boolean,
@@ -249,10 +235,6 @@ fun <T> ScrollableRowList(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AgeContent(modifier: Modifier = Modifier) {
-    val listState = rememberLazyListState()
-    LaunchedEffect(Unit) {
-        listState.scrollToItem(0, 10)
-    }
     Box(
         modifier = Modifier
             .border(
@@ -269,30 +251,62 @@ fun AgeContent(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Icon(
-                imageVector = Icons.Filled.PlayArrow,
-                contentDescription = "Play",
-                tint = MaterialTheme.colorScheme.secondary,
-                modifier = modifier.size(24.dp)
-            )
-            LazyColumn(
-                modifier = Modifier.height(100.dp),
-                state = listState,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
-            ) {
-                itemsIndexed(ageList) { index, numbers ->
-                    Text(
-                        "$numbers",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(5.dp)
-                    )
+            ArrowIcon(modifier)
+            LazyWrapperDetectingCenter(onContentDrawn = { highlightedItemIndex, listState ->
+                LazyColumn(
+                    modifier = Modifier.height(100.dp),
+                    state = listState,
+                    flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
+                ) {
+                    itemsIndexed(ageList) { index, numbers ->
+                        val isHighlighted = highlightedItemIndex == index
+                        val color =
+                            if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+                                alpha = 0.2f
+                            )
+                        Text(
+                            "$numbers",
+                            color = color,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(5.dp)
+                        )
+                    }
                 }
-            }
-        }
+            })
 
+        }
     }
+
+}
+
+
+@Composable
+private fun LazyWrapperDetectingCenter(onContentDrawn: @Composable (Int?, LazyListState) -> Unit) {
+    val listState = rememberLazyListState()
+    var highlightedItemIndex by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(listState) {
+        listState.scrollToItem(0, 10)
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            val center = layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset / 2
+            val visibleItems = layoutInfo.visibleItemsInfo
+            val closestItem = visibleItems.minByOrNull { abs(it.offset + it.size / 2 - center) }
+            closestItem?.index
+        }.collect { index ->
+            highlightedItemIndex = index
+        }
+    }
+    onContentDrawn(highlightedItemIndex, listState)
+}
+
+@Composable
+private fun ArrowIcon(modifier: Modifier) {
+    Icon(
+        imageVector = Icons.Filled.PlayArrow,
+        contentDescription = "Play",
+        tint = MaterialTheme.colorScheme.surface,
+        modifier = modifier.size(24.dp)
+    )
 }
 
 @Composable
@@ -334,35 +348,31 @@ fun HeightContent(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeightContent(modifier: Modifier = Modifier) {
-    val listState = rememberLazyListState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            imageVector = Icons.Filled.PlayArrow,
-            contentDescription = "Play",
-            tint = MaterialTheme.colorScheme.secondary,
-            modifier = modifier
-                .size(24.dp)
-                .rotate(90f) //Rotate by 45 degrees
+        ArrowIcon(modifier = modifier.rotate(90f))
+        LazyWrapperDetectingCenter(onContentDrawn = { highlightedItemIndex, listState ->
+            LazyRow(
+                modifier = Modifier.height(50.dp),
+                state = listState,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
+            ) {
+                itemsIndexed(weightList) { index, numbers ->
+                    val isHighlighted = highlightedItemIndex == index
+                    Text(
+                        "$numbers",
+                        color = if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+                            alpha = 0.2f
+                        ),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(5.dp)
+                    )
 
-        )
-        LazyRow(
-            modifier = Modifier.height(50.dp),
-            state = listState,
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
-        ) {
-            itemsIndexed(weightList) { index, numbers ->
-                Text(
-                    "$numbers",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(5.dp)
-                )
-
+                }
             }
-        }
+        })
     }
 
 
@@ -372,12 +382,12 @@ fun WeightContent(modifier: Modifier = Modifier) {
 @Composable
 fun BMIButton(modifier: Modifier, text: String, onClick: () -> Unit) {
     Button(
-        modifier = modifier.height(60.dp),
+        modifier = modifier.height(55.dp),
         onClick = onClick, colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ),
-        shape = RoundedCornerShape(5.dp)
+        shape = RoundedCornerShape(35.dp)
     ) {
         Text(text = text, fontWeight = FontWeight.Normal)
     }

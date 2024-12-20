@@ -12,7 +12,7 @@ var genders = mutableListOf(
 
 data class Person(var name: String, var age: Int)
 
-var ageList = (25..80).toMutableList()
+var ageList = (10..100).toMutableList()
 var heightList = (120..220).toMutableList()
 var weightList = (25..220).toMutableList()
 

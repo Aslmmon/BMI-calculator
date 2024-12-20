@@ -67,7 +67,7 @@ fun BmiInputScreen(
     }
     Box(modifier = Modifier
         .fillMaxSize()
-        .padding(horizontal = 10.dp, vertical = 5.dp)) {
+        .padding(horizontal = 10.dp, vertical = 10.dp)) {
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
             BMIButton(
                 modifier = modifier
