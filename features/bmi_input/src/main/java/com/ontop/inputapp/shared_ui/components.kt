@@ -10,8 +10,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +52,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ontop.ageList
 import com.ontop.gender
+import com.ontop.heightList
+import com.ontop.weightList
 import kotlin.math.abs
 
 @Composable
@@ -76,7 +81,7 @@ fun ContentWithTitle(
         Text(
             text = title,
             textAlign = TextAlign.Center,
-            modifier = modifier.padding( vertical = 15.dp),
+            modifier = modifier.padding(vertical = 15.dp),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.titleSmall
         )
@@ -277,12 +282,90 @@ fun AgeContent(modifier: Modifier = Modifier) {
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
             ) {
                 itemsIndexed(ageList) { index, numbers ->
-                    Text("$numbers", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, modifier = Modifier.padding(5.dp))
+                    Text(
+                        "$numbers",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(5.dp)
+                    )
                 }
             }
         }
 
     }
+}
+
+@Composable
+fun HeightContent(modifier: Modifier = Modifier) {
+
+    LazyRow(
+        modifier = Modifier.height(100.dp),
+        contentPadding = PaddingValues(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        itemsIndexed(heightList) { index, numbers ->
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "$numbers",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(5.dp)
+                )
+                // if (index < heightList.lastIndex) {// Vertical divider
+                Divider(
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .fillMaxHeight()  //fill the max height
+                        .width(0.5.dp)
+                )
+                //}
+            }
+
+        }
+    }
+
+
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun WeightContent(modifier: Modifier = Modifier) {
+    val listState = rememberLazyListState()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Filled.PlayArrow,
+            contentDescription = "Play",
+            tint = MaterialTheme.colorScheme.secondary,
+            modifier = modifier
+                .size(24.dp)
+                .rotate(90f) //Rotate by 45 degrees
+
+        )
+        LazyRow(
+            modifier = Modifier.height(50.dp),
+            state = listState,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
+        ) {
+            itemsIndexed(weightList) { index, numbers ->
+                Text(
+                    "$numbers",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(5.dp)
+                )
+
+            }
+        }
+    }
+
+
 }
 
 

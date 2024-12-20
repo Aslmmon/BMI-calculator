@@ -24,10 +24,12 @@ import com.ontop.inputapp.shared_ui.AgeContent
 import com.ontop.inputapp.shared_ui.BMIButton
 import com.ontop.inputapp.shared_ui.ContentWithTitle
 import com.ontop.inputapp.shared_ui.GenderView
+import com.ontop.inputapp.shared_ui.HeightContent
 import com.ontop.inputapp.shared_ui.HeightViewNew
 import com.ontop.inputapp.shared_ui.RoundedCardView
 import com.ontop.inputapp.shared_ui.ScrollableRowList
 import com.ontop.inputapp.shared_ui.TitleScreen
+import com.ontop.inputapp.shared_ui.WeightContent
 import com.ontop.inputapp.shared_ui._gap
 
 
@@ -54,7 +56,11 @@ fun BmiInputScreen(
 
 
         ContentWithTitle(title = stringResource(R.string.height)) {
+            HeightContent()
+        }
 
+        ContentWithTitle(title = stringResource(R.string.weight)) {
+            WeightContent()
         }
 
         _gap(20)
