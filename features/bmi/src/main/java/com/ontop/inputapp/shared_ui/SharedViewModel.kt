@@ -1,4 +1,4 @@
-package com.fitform.navigation.shared
+package com.ontop.inputapp.shared_ui
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

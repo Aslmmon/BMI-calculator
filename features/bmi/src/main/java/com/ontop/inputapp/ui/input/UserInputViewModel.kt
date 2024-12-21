@@ -1,6 +1,5 @@
 package com.ontop.inputapp.ui.input
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,34 +10,23 @@ import kotlinx.coroutines.flow.asStateFlow
 @HiltViewModel
 class UserInputViewModel : ViewModel() {
 
-    private val _userInputSelection =
-        MutableStateFlow<UserInputSelection>(UserInputSelection.Gender(-1))
-    val userInputSelection: StateFlow<UserInputSelection> = _userInputSelection.asStateFlow()
-
+    private val _userData = MutableStateFlow(UserInputSelection.UserData(-1, -1, -1, -1))
+    val userData: StateFlow<UserInputSelection.UserData> = _userData.asStateFlow()
 
     fun updateAge(age: Int) {
-
-        _userInputSelection.value = UserInputSelection.Age(age)
-        Log.d("age", "age chosen is ${userInputSelection.value}")
-
+        _userData.value = _userData.value.copy(age = age)
     }
 
     fun updateGender(gender: Int) {
-        _userInputSelection.value = UserInputSelection.Gender(gender)
-        Log.d("gender", "gender chosen is ${userInputSelection.value}")
-
+        _userData.value = _userData.value.copy(gender = gender)
     }
 
     fun updateHeight(height: Int) {
-        _userInputSelection.value = UserInputSelection.Height(height)
-        Log.d("Height", "Height chosen is ${userInputSelection.value}")
-
+        _userData.value = _userData.value.copy(height = height)
     }
 
     fun updateWeight(weight: Int) {
-        _userInputSelection.value = UserInputSelection.Weight(weight)
-        Log.d("Weight", "Weight chosen is ${userInputSelection.value}")
-
+        _userData.value = _userData.value.copy(height = weight)
     }
 
 
@@ -46,8 +34,5 @@ class UserInputViewModel : ViewModel() {
 
 
 sealed class UserInputSelection {
-    data class Gender(val value: Int) : UserInputSelection()
-    data class Age(val value: Int) : UserInputSelection()
-    data class Height(val value: Int) : UserInputSelection()
-    data class Weight(val value: Int) : UserInputSelection()
+    data class UserData(var gender: Int, var age: Int, var height: Int, var weight: Int)
 }

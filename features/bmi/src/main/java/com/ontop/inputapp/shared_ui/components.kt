@@ -436,7 +436,7 @@ fun WeightContent(modifier: Modifier = Modifier, onWeightChosen: (Int) -> Unit) 
 @Composable
 fun ButtonWithHyperLinkContent(
     buttonText: Int,
-    onCalculateClicked: () -> Unit,
+    onCalculateClicked:()-> Unit,
     urlToBeOpend: String = BMIIndexUrl,
 ) {
     val uriHandler = LocalUriHandler.current

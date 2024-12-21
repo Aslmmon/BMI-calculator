@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import com.ontop.heightVariants
 import com.ontop.inputapp.R
 import com.ontop.inputapp.shared_ui.AgeContent
@@ -19,6 +20,7 @@ import com.ontop.inputapp.shared_ui.ButtonWithHyperLinkContent
 import com.ontop.inputapp.shared_ui.ContentWithTitle
 import com.ontop.inputapp.shared_ui.GenderContent
 import com.ontop.inputapp.shared_ui.HeightContent
+import com.ontop.inputapp.shared_ui.SharedViewModel
 import com.ontop.inputapp.shared_ui.VariantContent
 import com.ontop.inputapp.shared_ui.TitleScreen
 import com.ontop.inputapp.shared_ui.WeightContent
@@ -29,9 +31,11 @@ import com.ontop.weightVariants
 @Composable
 fun BmiInputScreen(
     userInputViewModel: UserInputViewModel = hiltViewModel(),
-    onCalculateClicked: () -> Unit = {}
+    onCalculateClicked: () -> Unit = {},
+    sharedViewModel: SharedViewModel<UserInputSelection.UserData>
 ) {
     val scrollState = rememberScrollState()
+    val userData by userInputViewModel.userData.collectAsState()
 
     Column(
         modifier = Modifier
@@ -40,6 +44,8 @@ fun BmiInputScreen(
     ) {
         TitleScreen(stringResource(id = R.string.bmi_calculator_title))
         _gap(height = 10)
+
+
         ContentWithTitle(title = stringResource(R.string.gender_title), content = {
             GenderContent { gender ->
                 userInputViewModel.updateGender(gender)
@@ -72,13 +78,13 @@ fun BmiInputScreen(
         })
 
     }
-    ButtonWithHyperLinkContent(buttonText = R.string.calculate_bmi, onCalculateClicked)
+    ButtonWithHyperLinkContent(
+        buttonText = R.string.calculate_bmi,
+        onCalculateClicked = {
+            sharedViewModel.setData(userData)
+            onCalculateClicked.invoke()
+        }
+    )
 
 }
 
-
-@Preview
-@Composable
-fun ShowBMiInputScreen() {
-    BmiInputScreen()
-}

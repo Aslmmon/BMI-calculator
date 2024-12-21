@@ -2,12 +2,15 @@ package com.fitform.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ontop.home.ui.SplashScreen
+import com.ontop.inputapp.shared_ui.SharedViewModel
 import com.ontop.inputapp.ui.input.BmiInputScreen
+import com.ontop.inputapp.ui.input.UserInputSelection
 import com.ontop.inputapp.ui.result.BmiResultScreen
 
 const val SPLASH_ROUTE = "splashroute"
@@ -21,6 +24,8 @@ fun FitFormNavHost(
     startDestination: String = SPLASH_ROUTE,
     navController: NavHostController = rememberNavController()
 ) {
+    val sharedViewModel = viewModel<SharedViewModel<UserInputSelection.UserData>>()
+
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -38,16 +43,17 @@ fun FitFormNavHost(
             route = BMI_Input
         ) {
 
-            BmiInputScreen(onCalculateClicked = {
-                navController.navigate(BMI_Result)
-            })
+            BmiInputScreen(
+                onCalculateClicked = { navController.navigate(BMI_Result) },
+                sharedViewModel = sharedViewModel
+            )
         }
         composable(
             route = BMI_Result
         ) {
             BmiResultScreen(onReCalculateClicked = {
                 navController.popBackStack()
-            })
+            }, sharedViewModel = sharedViewModel)
 
         }
 
