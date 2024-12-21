@@ -10,4 +10,6 @@
     <string name="weight">Weight</string>
     <string name="learn_text">Learn more about BMI(Body Mass Index)</string>
     <string name="calculate_bmi">CALCULATE </string>
+    <string name="new_calculate">NEW CALCULATE </string>
+
 </resources>

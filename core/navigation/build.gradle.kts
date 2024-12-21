@@ -50,7 +50,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(project(":features:splash"))
-    implementation(project(":features:bmi_input"))
+    implementation(project(":features:bmi"))
 
 
 

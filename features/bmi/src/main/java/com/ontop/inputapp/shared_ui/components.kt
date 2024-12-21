@@ -1,5 +1,8 @@
 package com.ontop.inputapp.shared_ui
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,18 +52,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.ontop.BMIIndexUrl
 import com.ontop.ageList
 import com.ontop.gender
+import com.ontop.genders
 import com.ontop.heightList
+import com.ontop.inputapp.R
 import com.ontop.weightList
 import kotlin.math.abs
 
 @Composable
-fun TitleScreen( title: String) {
+fun TitleScreen(title: String) {
     Text(
         text = title,
         color = MaterialTheme.colorScheme.surface,
@@ -177,57 +189,22 @@ fun SVGloader(
 }
 
 
+
 @Composable
-fun HeightViewNew(
-    modifier: Modifier,
-    isSameIndex: Boolean,
-    item: Int,
-) {
-    Column(modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = item.toString(),
-            textAlign = TextAlign.Start,
-            fontWeight = if (isSameIndex) FontWeight.Bold else FontWeight.Light
-        )
-        _gap(height = 30)
-        Divider(
-            color = if (isSameIndex) Color.Blue else Color.Gray,
-            modifier = Modifier
-                .height(if (isSameIndex) 30.dp else 20.dp)
-                .width(if (isSameIndex) 3.dp else 1.dp)
-        )
-    }
+ fun GenderContent() {
+    var selectedGender by remember { mutableStateOf<Int>(-1) }
 
-
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun <T> ScrollableRowList(
-    modifier: Modifier,
-    content: @Composable (Boolean, T) -> Unit,
-    lists: List<T>
-) {
-    val state = rememberLazyListState()
-    val centerItemIndex by remember {
-        derivedStateOf {
-            val layoutInfo = state.layoutInfo
-            val visibleItems = layoutInfo.visibleItemsInfo
-            val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
-
-            visibleItems.minByOrNull { abs((it.offset + it.size / 2) - viewportCenter) }?.index ?: 0
-        }
-    }
     LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        state = state,
-        flingBehavior = rememberSnapFlingBehavior(lazyListState = state)
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround // Distribute items evenly
     ) {
-        itemsIndexed(lists) { index, item ->
-            val isItemCenterd = centerItemIndex == index
-            content.invoke(isItemCenterd, item)
+        itemsIndexed(genders) { index, item ->
+            GenderView(
+                modifier = Modifier, gender = item, onGenderClicked = {
+                    selectedGender = index
+                }, selectedGender == index
+            )
         }
-
     }
 }
 
@@ -311,7 +288,7 @@ private fun ArrowIcon(modifier: Modifier) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HeightContent(modifier: Modifier = Modifier) {
+fun HeightContent() {
 
     LazyWrapperDetectingCenter(onContentDrawn = { highlightedItemIndex, listState ->
         LazyRow(
@@ -386,6 +363,48 @@ fun WeightContent(modifier: Modifier = Modifier) {
 
 }
 
+
+
+@Composable
+fun ButtonWithHyperLinkContent(
+    buttonText: Int,
+    onCalculateClicked: () -> Unit,
+    urlToBeOpend: String = BMIIndexUrl,
+) {
+    val uriHandler = LocalUriHandler.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 10.dp, vertical = 10.dp)
+    ) {
+        Column(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                stringResource(id = R.string.learn_text), fontSize = 10.sp,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable {
+                    try {
+                        uriHandler.openUri(urlToBeOpend)
+                    } catch (e: Exception) {
+                        Log.e("error", "ButtonWithHyperLinkContent: ${e.message}")
+                    }
+                },
+                style = TextStyle(textDecoration = TextDecoration.Underline)
+            )
+            _gap()
+            BMIButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.End),
+                stringResource(buttonText),
+                onClick = onCalculateClicked
+            )
+        }
+    }
+}
 
 @Composable
 fun BMIButton(modifier: Modifier, text: String, onClick: () -> Unit) {
