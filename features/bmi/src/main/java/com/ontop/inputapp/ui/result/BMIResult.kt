@@ -12,6 +12,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,12 +24,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ontop.inputapp.R
 import com.ontop.inputapp.shared_ui.ButtonWithHyperLinkContent
 import com.ontop.inputapp.shared_ui._gap
+import com.ontop.inputapp.ui.input.UserInputSelection
+import com.ontop.inputapp.ui.input.UserInputViewModel
 
 @Composable
-fun BmiResultScreen(onReCalculateClicked: () -> Unit) {
+fun BmiResultScreen(
+    onReCalculateClicked: () -> Unit,
+    userInputViewModel: UserInputViewModel = hiltViewModel(),
+) {
+    val userInputSelection by userInputViewModel.userInputSelection.collectAsState()
 
     Column(
         modifier = Modifier
@@ -38,7 +47,7 @@ fun BmiResultScreen(onReCalculateClicked: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Result",
+            text = "Result of ${(userInputSelection as UserInputSelection.Gender).value}",
             color = MaterialTheme.colorScheme.surface,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp

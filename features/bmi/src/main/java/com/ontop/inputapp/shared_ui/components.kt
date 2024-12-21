@@ -1,7 +1,7 @@
 package com.ontop.inputapp.shared_ui
 
+import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,8 +32,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -65,6 +64,8 @@ import com.ontop.genders
 import com.ontop.heightList
 import com.ontop.inputapp.R
 import com.ontop.weightList
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @Composable
@@ -217,8 +218,8 @@ fun SVGloader(
 
 
 @Composable
-fun GenderContent() {
-    var selectedGender by remember { mutableStateOf<Int>(-1) }
+fun GenderContent(genderChosen: (Int) -> Unit) {
+    var selectedGender by remember { mutableStateOf<Int>(0) }
 
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -228,6 +229,7 @@ fun GenderContent() {
             GenderView(
                 modifier = Modifier, gender = item, onGenderClicked = {
                     selectedGender = index
+                    genderChosen(selectedGender)
                 }, selectedGender == index
             )
         }
@@ -252,9 +254,11 @@ fun VariantContent(listToPopulateVariants: MutableList<String>) {
 }
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AgeContent(modifier: Modifier = Modifier) {
+fun AgeContent(modifier: Modifier = Modifier, onAgeChosen: (Int) -> Unit) {
+
     Box(
         modifier = Modifier
             .border(
@@ -272,7 +276,11 @@ fun AgeContent(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             ArrowIcon(modifier)
-            LazyWrapperDetectingCenter(onContentDrawn = { highlightedItemIndex, listState ->
+            LazyWrapperDetectingCenter(ageList, onChosenCenterItem = { centerItem ->
+                onAgeChosen(centerItem)
+            }, onContentDrawn = { highlightedItemIndex, listState ->
+
+
                 LazyColumn(
                     modifier = Modifier.height(100.dp),
                     state = listState,
@@ -300,9 +308,15 @@ fun AgeContent(modifier: Modifier = Modifier) {
 }
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-private fun LazyWrapperDetectingCenter(onContentDrawn: @Composable (Int?, LazyListState) -> Unit) {
+private fun LazyWrapperDetectingCenter(
+    listToGetCenterItemFrom: List<Int>,
+    onChosenCenterItem: (Int) -> Unit,
+    onContentDrawn: @Composable (Int?, LazyListState) -> Unit
+) {
     val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
     var highlightedItemIndex by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(listState) {
         listState.scrollToItem(0, 10)
@@ -314,6 +328,14 @@ private fun LazyWrapperDetectingCenter(onContentDrawn: @Composable (Int?, LazyLi
             closestItem?.index
         }.collect { index ->
             highlightedItemIndex = index
+        }
+    }
+    // In your item composable:
+    if (!listState.isScrollInProgress) {
+        coroutineScope.launch {
+            delay(200)
+            onChosenCenterItem(listToGetCenterItemFrom[highlightedItemIndex ?: 0])
+
         }
     }
     onContentDrawn(highlightedItemIndex, listState)
@@ -331,9 +353,11 @@ private fun ArrowIcon(modifier: Modifier) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HeightContent() {
+fun HeightContent(onHeightChosen: (Int) -> Unit) {
 
-    LazyWrapperDetectingCenter(onContentDrawn = { highlightedItemIndex, listState ->
+    LazyWrapperDetectingCenter(heightList, onChosenCenterItem = { centerItem ->
+        onHeightChosen(centerItem)
+    }, onContentDrawn = { highlightedItemIndex, listState ->
         LazyRow(
             modifier = Modifier.height(100.dp),
             contentPadding = PaddingValues(10.dp),
@@ -375,12 +399,14 @@ fun HeightContent() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WeightContent(modifier: Modifier = Modifier) {
+fun WeightContent(modifier: Modifier = Modifier, onWeightChosen: (Int) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ArrowIcon(modifier = modifier.rotate(90f))
-        LazyWrapperDetectingCenter(onContentDrawn = { highlightedItemIndex, listState ->
+        LazyWrapperDetectingCenter(weightList, onChosenCenterItem = { centerItem ->
+            onWeightChosen(centerItem)
+        }, onContentDrawn = { highlightedItemIndex, listState ->
             LazyRow(
                 modifier = Modifier.height(50.dp),
                 state = listState,
