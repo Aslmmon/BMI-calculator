@@ -1,8 +1,6 @@
 package com.ontop.inputapp.shared_ui
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -41,7 +39,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,39 +84,32 @@ fun TitleScreen(title: String) {
 fun ContentWithTitle(
     modifier: Modifier = Modifier,
     title: String,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
+    showContentVariants: Boolean = false,
+    variants: @Composable () -> Unit? = {}
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
-        Text(
-            text = title,
-            textAlign = TextAlign.Center,
-            modifier = modifier.padding(vertical = 15.dp),
-            color = MaterialTheme.colorScheme.surface,
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.SemiBold
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = title,
+                textAlign = TextAlign.Center,
+                modifier = modifier.padding(vertical = 15.dp),
+                color = MaterialTheme.colorScheme.surface,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+            if (showContentVariants) {
+                variants.invoke()
+            }
+        }
         content.invoke()
     }
 }
 
 @Composable
 fun _gap(height: Int = 10) = Spacer(modifier = Modifier.height(height.dp))
-
-@Composable
-fun RoundedCardView(modifier: Modifier, content: @Composable () -> Unit) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onPrimary,
-        ),
-        border = BorderStroke(0.1.dp, Color.Gray.copy(alpha = 0.8f)),
-        shape = RoundedCornerShape(10.dp), // Set the corner radius
-    ) {
-        content.invoke()
-    }
-}
 
 
 @Composable
@@ -174,6 +164,43 @@ fun GenderView(
 }
 
 @Composable
+fun Variant(
+    variantName: String,
+    onVariantClicked: () -> Unit,
+    isVariantChosen: Boolean
+) {
+
+    Spacer(modifier = Modifier.width(5.dp))
+    Box(
+        modifier = Modifier
+            .border(
+                width = 0.5.dp,
+                color = if (isVariantChosen) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(10.dp)
+            )
+            .clickable(indication = null, interactionSource = remember {
+                MutableInteractionSource()
+            }) {
+                onVariantClicked.invoke()
+            }
+            .clip(RoundedCornerShape(11.dp))
+            .background(if (isVariantChosen) MaterialTheme.colorScheme.primary else Color.White)
+            .width(50.dp),
+        contentAlignment = Alignment.Center // Align to the left (start)
+        // Apply rounded corners
+    ) {
+        Text(
+            variantName,
+            color = if (isVariantChosen) Color.White else MaterialTheme.colorScheme.primary,
+            fontSize = 10.sp,
+        )
+    }
+
+
+}
+
+
+@Composable
 fun SVGloader(
     modifier: Modifier = Modifier,
     iconResource: Int,
@@ -189,9 +216,8 @@ fun SVGloader(
 }
 
 
-
 @Composable
- fun GenderContent() {
+fun GenderContent() {
     var selectedGender by remember { mutableStateOf<Int>(-1) }
 
     LazyRow(
@@ -204,6 +230,23 @@ fun SVGloader(
                     selectedGender = index
                 }, selectedGender == index
             )
+        }
+    }
+}
+
+@Composable
+fun VariantContent(listToPopulateVariants: MutableList<String>) {
+    var selectdVariant by remember { mutableStateOf<Int>(0) }
+    LazyRow(
+
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.aligned(Alignment.End),
+        contentPadding = PaddingValues(10.dp)
+    ) {
+        itemsIndexed(listToPopulateVariants) { index, item ->
+            Variant(item, onVariantClicked = {
+                selectdVariant = index
+            }, isVariantChosen = selectdVariant == index)
         }
     }
 }
@@ -362,7 +405,6 @@ fun WeightContent(modifier: Modifier = Modifier) {
 
 
 }
-
 
 
 @Composable

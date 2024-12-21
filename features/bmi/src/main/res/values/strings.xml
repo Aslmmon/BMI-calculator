@@ -5,7 +5,7 @@
     <string name="gender_title">Gender</string>
     <string name="male">Male</string>
     <string name="female">female</string>
-    <string name="height">Height (cm)</string>
+    <string name="height">Height</string>
     <string name="age_title">Age</string>
     <string name="weight">Weight</string>
     <string name="learn_text">Learn more about BMI(Body Mass Index)</string>

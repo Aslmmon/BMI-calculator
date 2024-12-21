@@ -10,6 +10,13 @@ var genders = mutableListOf(
     gender("Male", icon = R.drawable.male),
     gender(name = "Female", icon = R.drawable.female)
 )
+var heightVariants = mutableListOf(
+    "Cm", "Inches"
+)
+var weightVariants = mutableListOf(
+    "KG", "Pounds"
+)
+
 
 data class Person(var name: String, var age: Int)
 
