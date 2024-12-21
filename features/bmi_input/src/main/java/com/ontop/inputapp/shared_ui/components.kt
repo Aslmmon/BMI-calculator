@@ -309,37 +309,45 @@ private fun ArrowIcon(modifier: Modifier) {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HeightContent(modifier: Modifier = Modifier) {
 
-    LazyRow(
-        modifier = Modifier.height(100.dp),
-        contentPadding = PaddingValues(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        itemsIndexed(heightList) { index, numbers ->
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    "$numbers",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(5.dp)
-                )
-                // if (index < heightList.lastIndex) {// Vertical divider
-                Divider(
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .fillMaxHeight()  //fill the max height
-                        .width(0.5.dp)
-                )
-                //}
-            }
+    LazyWrapperDetectingCenter(onContentDrawn = { highlightedItemIndex, listState ->
+        LazyRow(
+            modifier = Modifier.height(100.dp),
+            contentPadding = PaddingValues(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            state = listState,
+            flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
+        ) {
+            itemsIndexed(heightList) { index, numbers ->
+                val isHighlighted = highlightedItemIndex == index
+                val color =
+                    if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+                        alpha = 0.2f
+                    )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        "$numbers",
+                        color = color,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                    Divider(
+                        color = color,
+                        modifier = Modifier
+                            .fillMaxHeight()  //fill the max height
+                            .width(0.5.dp)
+                    )
+                }
 
+            }
         }
-    }
+    })
 
 
 }

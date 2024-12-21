@@ -54,7 +54,6 @@ fun BmiInputScreen(
             AgeContent()
         }
 
-
         ContentWithTitle(title = stringResource(R.string.height)) {
             HeightContent()
         }
@@ -65,9 +64,11 @@ fun BmiInputScreen(
 
 
     }
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 10.dp, vertical = 10.dp)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 10.dp, vertical = 10.dp)
+    ) {
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
             BMIButton(
                 modifier = modifier
