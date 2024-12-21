@@ -1,5 +1,6 @@
 package com.ontop
 
+import androidx.compose.ui.platform.LocalUriHandler
 import com.ontop.inputapp.R
 
 
@@ -16,3 +17,5 @@ var ageList = (10..100).toMutableList()
 var heightList = (120..220).toMutableList()
 var weightList = (25..220).toMutableList()
 
+
+const val BMIIndexUrl = "https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi"

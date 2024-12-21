@@ -59,11 +59,11 @@ import com.ontop.weightList
 import kotlin.math.abs
 
 @Composable
-fun TitleScreen(modifier: Modifier = Modifier, title: String) {
+fun TitleScreen( title: String) {
     Text(
         text = title,
         color = MaterialTheme.colorScheme.surface,
-        modifier = modifier
+        modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth(),
         textAlign = TextAlign.Center,
