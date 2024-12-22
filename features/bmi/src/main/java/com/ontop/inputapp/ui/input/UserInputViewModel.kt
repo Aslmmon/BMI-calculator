@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 @HiltViewModel
 class UserInputViewModel : ViewModel() {
 
-    private val _userData = MutableStateFlow(UserInputSelection.UserData(-1, -1, -1, -1))
+    private val _userData = MutableStateFlow(UserInputSelection.UserData(0, 0, 0, 0))
     val userData: StateFlow<UserInputSelection.UserData> = _userData.asStateFlow()
 
     fun updateAge(age: Int) {
@@ -26,7 +26,7 @@ class UserInputViewModel : ViewModel() {
     }
 
     fun updateWeight(weight: Int) {
-        _userData.value = _userData.value.copy(height = weight)
+        _userData.value = _userData.value.copy(weight = weight)
     }
 
 

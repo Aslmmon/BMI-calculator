@@ -9,22 +9,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import com.ontop.heightVariants
 import com.ontop.inputapp.R
-import com.ontop.inputapp.shared_ui.AgeContent
-import com.ontop.inputapp.shared_ui.ButtonWithHyperLinkContent
-import com.ontop.inputapp.shared_ui.ContentWithTitle
-import com.ontop.inputapp.shared_ui.GenderContent
-import com.ontop.inputapp.shared_ui.HeightContent
-import com.ontop.inputapp.shared_ui.SharedViewModel
-import com.ontop.inputapp.shared_ui.VariantContent
-import com.ontop.inputapp.shared_ui.TitleScreen
-import com.ontop.inputapp.shared_ui.WeightContent
-import com.ontop.inputapp.shared_ui._gap
+import com.ontop.inputapp.shared.AgeContent
+import com.ontop.inputapp.shared.ButtonWithHyperLinkContent
+import com.ontop.inputapp.shared.ContentWithTitle
+import com.ontop.inputapp.shared.GenderContent
+import com.ontop.inputapp.shared.HeightContent
+import com.ontop.inputapp.shared.SharedViewModel
+import com.ontop.inputapp.shared.VariantContent
+import com.ontop.inputapp.shared.TitleScreen
+import com.ontop.inputapp.shared.WeightContent
+import com.ontop.inputapp.shared._gap
+import com.ontop.inputapp.ui.result.BMIResultViewModel
 import com.ontop.weightVariants
 
 

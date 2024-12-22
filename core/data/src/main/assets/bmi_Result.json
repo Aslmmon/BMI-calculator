@@ -1,0 +1,42 @@
+[
+  {
+    "status": "Underweight",
+    "rangeFrom": "0",
+    "rangeTo": "18.5",
+    "risk": "Malnutrition risk",
+    "summary": "This weight is too low and you should consult with a doctor.",
+    "recommendation": "A Body Mass Index (BMI) below 18.5 is considered underweight and may indicate malnutrition, an eating disorder, or other health issues. It's calculated by dividing a person's weight in kilograms by the square of their height in meters. A low BMI can be a result of various factors, including genetics, metabolism, and lifestyle choices. It's important to consult healthcare professionals if you're concerned about your BMI."
+  },
+  {
+    "status": "Normal",
+    "rangeFrom": "18.5",
+    "rangeTo": "24.9",
+    "risk": "Low risk",
+    "summary": "This weight is normal and you are healthy.",
+    "recommendation": "A BMI between 18.5 and 24.9 falls within the 'normal' weight range according to the World Health Organization. This range is associated with the lowest health risk for conditions such as heart disease, diabetes, and certain cancers. However, it's important to note that BMI is not a perfect measure as it does not account for muscle mass, bone density, overall body composition, and racial and sex differences. Therefore, while it's a useful starting point, it should not be the only measure of one's health."
+  },
+  {
+    "status": "Overweight",
+    "rangeFrom": "25.0",
+    "rangeTo": "29.9",
+    "risk": "Enhanced risk",
+    "summary": "This weight is higher than normal and you should start exercising.",
+    "recommendation": "A BMI between 25 and 29.9 is considered overweight and is associated with an increased risk of developing chronic diseases such as heart disease, diabetes, and certain cancers. It's important to maintain a healthy lifestyle by eating a balanced diet, exercising regularly, and getting enough sleep. Consult healthcare professionals for personalized advice on how to achieve and maintain a healthy weight."
+  },
+  {
+    "status": "Obese",
+    "rangeFrom": "30",
+    "rangeTo": "39.9",
+    "risk": "Medium risk",
+    "summary": "This weight is too high and you should start dieting.",
+    "recommendation": "A BMI between 30 and 34.9 is considered obese class 1 and is associated with a higher risk of developing chronic diseases such as heart disease, diabetes, and certain cancers. It's important to adopt a healthy lifestyle by eating a balanced diet, exercising regularly, and getting enough sleep. Consult healthcare professionals for personalized advice on how to achieve and maintain a healthy weight."
+  },
+  {
+    "status": "Obese 2",
+    "rangeFrom": "40",
+    "rangeTo": "100",
+    "risk": "Very high risk",
+    "summary": "This weight is too high and you should consult with a doctor.",
+    "recommendation": "A BMI of 40 or higher is considered obese class 3 and is associated with a very high risk of developing chronic diseases such as heart disease, diabetes, and certain cancers. It's important to adopt a healthy lifestyle by eating a balanced diet, exercising regularly, and getting enough sleep. Consult healthcare professionals for personalized advice on how to achieve and maintain a healthy weight."
+  }
+]

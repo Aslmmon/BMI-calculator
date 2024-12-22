@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ontop.home.ui.SplashScreen
-import com.ontop.inputapp.shared_ui.SharedViewModel
+import com.ontop.inputapp.shared.SharedViewModel
 import com.ontop.inputapp.ui.input.BmiInputScreen
 import com.ontop.inputapp.ui.input.UserInputSelection
 import com.ontop.inputapp.ui.result.BmiResultScreen

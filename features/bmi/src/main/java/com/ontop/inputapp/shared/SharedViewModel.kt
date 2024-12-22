@@ -1,4 +1,4 @@
-package com.ontop.inputapp.shared_ui
+package com.ontop.inputapp.shared
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

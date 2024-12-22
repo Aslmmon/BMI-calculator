@@ -24,6 +24,13 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+    sourceSets {
+        getByName("main") {
+            assets {
+                srcDirs("src/main/assets")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -38,5 +45,7 @@ dependencies {
     api(libs.androidx.paging.compose)
     kapt(libs.hilt.android.compiler)
     api(libs.hilt.android)
+    implementation (libs.gson)
+
 
 }

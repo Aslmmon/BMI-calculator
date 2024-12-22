@@ -12,28 +12,44 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ontop.inputapp.R
-import com.ontop.inputapp.shared_ui.ButtonWithHyperLinkContent
-import com.ontop.inputapp.shared_ui.SharedViewModel
-import com.ontop.inputapp.shared_ui._gap
+import com.ontop.inputapp.shared.ButtonWithHyperLinkContent
+import com.ontop.inputapp.shared.SharedViewModel
+import com.ontop.inputapp.shared._gap
 import com.ontop.inputapp.ui.input.UserInputSelection
 
 @Composable
 fun BmiResultScreen(
     onReCalculateClicked: () -> Unit,
-    sharedViewModel: SharedViewModel<UserInputSelection.UserData>
+    sharedViewModel: SharedViewModel<UserInputSelection.UserData>,
+    bmiResultViewModel: BMIResultViewModel = hiltViewModel()
+
 ) {
     val data = sharedViewModel.data
+    val bmiResult by bmiResultViewModel.bmiResult.collectAsState()
+    val bmiStatus by bmiResultViewModel.bmiStatus.collectAsState()
+
+    val context = LocalContext.current
+
+
+    LaunchedEffect(Unit) {
+        bmiResultViewModel.calculateBMi(data.value!!, context)
+    }
 
     Column(
         modifier = Modifier
@@ -44,7 +60,7 @@ fun BmiResultScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Result ${data.value?.gender.toString()}",
+            text = "Result",
             color = MaterialTheme.colorScheme.surface,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp
@@ -64,15 +80,24 @@ fun BmiResultScreen(
                 modifier = Modifier.padding(20.dp)
             ) {
                 Text(
-                    text = "BMI = 19.5 KG/M2 \n (Normal) ",
+                    text = "BMI = $bmiResult KG/M2 \n ${bmiStatus.bmiStatus?.status}) ",
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     color = Color.White
                 )
                 _gap()
                 Text(
-                    text = "A BMI of 18.5 kg/m2-25 kg/m2 indicates that you are at a healthy weight for your height" +
-                            "By maintaining a healthy weight, you lower your risk of developing serious health problems. ",
+                    text = bmiStatus.bmiStatus?.summary ?: "",
+                    fontSize = 12.sp,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(fontStyle = FontStyle.Italic)
+
+                )
+                _gap()
+
+                Text(
+                    text = bmiStatus.bmiStatus?.recommendation ?: "",
                     fontSize = 12.sp,
                     color = Color.White,
                     textAlign = TextAlign.Center,

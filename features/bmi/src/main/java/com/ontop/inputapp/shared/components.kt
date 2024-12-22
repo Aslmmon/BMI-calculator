@@ -1,4 +1,4 @@
-package com.ontop.inputapp.shared_ui
+package com.ontop.inputapp.shared
 
 import android.annotation.SuppressLint
 import android.util.Log
