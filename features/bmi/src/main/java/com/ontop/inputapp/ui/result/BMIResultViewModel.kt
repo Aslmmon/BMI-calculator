@@ -27,8 +27,8 @@ class BMIResultViewModel : ViewModel() {
     fun calculateBMi(userData: UserInputSelection.UserData, context: Context) {
         val result = bmiRepository.getBmiResult(context)
 
-        val heightInMeters = userData.height / 100.0 // Assuming height is in centimeters
-        val bmi = userData.weight / (heightInMeters * heightInMeters)
+        val heightInMeters = userData.height?.div(100.0) ?: 0.0// Assuming height is in centimeters
+        val bmi = userData.weight!!.div((heightInMeters * heightInMeters))
         val bmiResult = result.find { bmi in it.rangeFrom.toDouble()..it.rangeTo.toDouble() }
         _bmiResult.value = BMiStatus.result(String.format("%.2f", bmi))
         _bmiStatus.value = BMiStatus.bmiStatus(bmiResult)
@@ -38,7 +38,6 @@ class BMIResultViewModel : ViewModel() {
 
 
 sealed class BMiStatus {
-    data class loading(val isLoading: Boolean = false) : BMiStatus()
     data class result(val result: String = "0") : BMiStatus()
     data class bmiStatus(val bmiStatus: BmiItem? = null) : BMiStatus()
 

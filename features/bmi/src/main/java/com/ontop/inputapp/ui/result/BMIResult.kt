@@ -31,7 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ontop.inputapp.R
 import com.ontop.inputapp.shared.ButtonWithHyperLinkContent
 import com.ontop.inputapp.shared.SharedViewModel
-import com.ontop.inputapp.shared._gap
+import com.ontop.inputapp.shared._Gap
 import com.ontop.inputapp.ui.input.UserInputSelection
 
 @Composable
@@ -68,7 +68,7 @@ fun BmiResultScreen(
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp
         )
-        _gap()
+        _Gap()
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(15.dp))
@@ -88,7 +88,7 @@ fun BmiResultScreen(
                     textAlign = TextAlign.Center,
                     color = Color.White
                 )
-                _gap()
+                _Gap()
                 Text(
                     text = bmiStatus.bmiStatus?.summary ?: "",
                     fontSize = 12.sp,
@@ -97,7 +97,7 @@ fun BmiResultScreen(
                     style = TextStyle(fontStyle = FontStyle.Italic)
 
                 )
-                _gap()
+                _Gap()
 
                 Text(
                     text = bmiStatus.bmiStatus?.recommendation ?: "",
@@ -111,7 +111,7 @@ fun BmiResultScreen(
             }
         }
 
-        _gap()
+        _Gap()
 
         Box(
             modifier = Modifier

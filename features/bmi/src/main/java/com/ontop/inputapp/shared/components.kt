@@ -32,12 +32,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -113,7 +113,7 @@ fun ContentWithTitle(
 }
 
 @Composable
-fun _gap(height: Int = 10) = Spacer(modifier = Modifier.height(height.dp))
+fun _Gap(height: Int = 10) = Spacer(modifier = Modifier.height(height.dp))
 
 
 @Composable
@@ -452,7 +452,9 @@ fun WeightContent(modifier: Modifier = Modifier, onWeightChosen: (Int) -> Unit) 
 @Composable
 fun ButtonWithHyperLinkContent(
     buttonText: Int,
+    isLoading: Boolean = false,
     onCalculateClicked: () -> Unit,
+
     urlToBeOpend: String = BMIIndexUrl,
 ) {
     val uriHandler = LocalUriHandler.current
@@ -478,12 +480,13 @@ fun ButtonWithHyperLinkContent(
                 },
                 style = TextStyle(textDecoration = TextDecoration.Underline)
             )
-            _gap()
+            _Gap()
             BMIButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.End),
                 stringResource(buttonText),
+                isLoading = isLoading,
                 onClick = onCalculateClicked
             )
         }
@@ -491,7 +494,7 @@ fun ButtonWithHyperLinkContent(
 }
 
 @Composable
-fun BMIButton(modifier: Modifier, text: String, onClick: () -> Unit) {
+fun BMIButton(modifier: Modifier, text: String, onClick: () -> Unit, isLoading: Boolean = false) {
     Button(
         modifier = modifier.height(55.dp),
         onClick = onClick, colors = ButtonDefaults.buttonColors(
@@ -500,6 +503,12 @@ fun BMIButton(modifier: Modifier, text: String, onClick: () -> Unit) {
         ),
         shape = RoundedCornerShape(35.dp)
     ) {
-        Text(text = text, fontWeight = FontWeight.Normal)
+        when (isLoading) {
+            false -> Text(text = text, fontWeight = FontWeight.Normal)
+            true -> CircularProgressIndicator(
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
     }
 }
