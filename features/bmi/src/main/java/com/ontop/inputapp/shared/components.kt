@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,6 +57,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ontop.BMIIndexUrl
@@ -258,7 +261,6 @@ fun VariantContent(listToPopulateVariants: MutableList<String>) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AgeContent(modifier: Modifier = Modifier, onAgeChosen: (Int) -> Unit) {
-
     Box(
         modifier = Modifier
             .border(
@@ -278,12 +280,13 @@ fun AgeContent(modifier: Modifier = Modifier, onAgeChosen: (Int) -> Unit) {
             ArrowIcon(modifier)
             LazyWrapperDetectingCenter(ageList, onChosenCenterItem = { centerItem ->
                 onAgeChosen(centerItem)
-            }, onContentDrawn = { highlightedItemIndex, listState ->
+            }, onContentDrawn = { highlightedItemIndex, listState, padding ->
 
 
                 LazyColumn(
                     modifier = Modifier.height(100.dp),
                     state = listState,
+                    contentPadding = PaddingValues(top = 35.dp, bottom = 35.dp),
                     flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
                 ) {
                     itemsIndexed(ageList) { index, numbers ->
@@ -313,23 +316,29 @@ fun AgeContent(modifier: Modifier = Modifier, onAgeChosen: (Int) -> Unit) {
 private fun LazyWrapperDetectingCenter(
     listToGetCenterItemFrom: List<Int>,
     onChosenCenterItem: (Int) -> Unit,
-    onContentDrawn: @Composable (Int?, LazyListState) -> Unit
+    onContentDrawn: @Composable (Int?, LazyListState, Dp) -> Unit
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     var highlightedItemIndex by remember { mutableStateOf<Int?>(null) }
+    val configuration = LocalConfiguration.current
+    val itemWidth = 50.dp // Adjust based on your item width
+    val startPaddings = (configuration.screenWidthDp.dp - itemWidth) / 2
     LaunchedEffect(listState) {
         listState.scrollToItem(0, 10)
+
         snapshotFlow {
             val layoutInfo = listState.layoutInfo
             val center = layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset / 2
             val visibleItems = layoutInfo.visibleItemsInfo
-            val closestItem = visibleItems.minByOrNull { abs(it.offset + it.size / 2 - center) }
+//            val closestItem = visibleItems.minByOrNull { abs(it.offset + it.size / 2)  - center}
+            val closestItem = visibleItems.minByOrNull { abs(it.offset + it.size / 2) }
             closestItem?.index
         }.collect { index ->
             highlightedItemIndex = index
         }
     }
+
     // In your item composable:
     if (!listState.isScrollInProgress) {
         coroutineScope.launch {
@@ -338,7 +347,7 @@ private fun LazyWrapperDetectingCenter(
 
         }
     }
-    onContentDrawn(highlightedItemIndex, listState)
+    onContentDrawn(highlightedItemIndex, listState, startPaddings)
 }
 
 @Composable
@@ -355,14 +364,21 @@ private fun ArrowIcon(modifier: Modifier) {
 @Composable
 fun HeightContent(onHeightChosen: (Int) -> Unit) {
 
+    val configuration = LocalConfiguration.current
+    val itemWidth = 0.dp // Adjust based on your item width
+    val startPaddings = (configuration.screenWidthDp.dp - itemWidth) / 2
     LazyWrapperDetectingCenter(heightList, onChosenCenterItem = { centerItem ->
         onHeightChosen(centerItem)
-    }, onContentDrawn = { highlightedItemIndex, listState ->
+
+    }, onContentDrawn = { highlightedItemIndex, listState, padding ->
+
+
         LazyRow(
             modifier = Modifier.height(100.dp),
-            contentPadding = PaddingValues(10.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             state = listState,
+            contentPadding = PaddingValues(start = padding, end = padding),
+
             flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
         ) {
             itemsIndexed(heightList) { index, numbers ->
@@ -400,16 +416,19 @@ fun HeightContent(onHeightChosen: (Int) -> Unit) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeightContent(modifier: Modifier = Modifier, onWeightChosen: (Int) -> Unit) {
+
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ArrowIcon(modifier = modifier.rotate(90f))
         LazyWrapperDetectingCenter(weightList, onChosenCenterItem = { centerItem ->
             onWeightChosen(centerItem)
-        }, onContentDrawn = { highlightedItemIndex, listState ->
+        }, onContentDrawn = { highlightedItemIndex, listState, padding ->
             LazyRow(
                 modifier = Modifier.height(50.dp),
                 state = listState,
+                contentPadding = PaddingValues(start = padding, end = padding),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
             ) {
@@ -436,7 +455,7 @@ fun WeightContent(modifier: Modifier = Modifier, onWeightChosen: (Int) -> Unit) 
 @Composable
 fun ButtonWithHyperLinkContent(
     buttonText: Int,
-    onCalculateClicked:()-> Unit,
+    onCalculateClicked: () -> Unit,
     urlToBeOpend: String = BMIIndexUrl,
 ) {
     val uriHandler = LocalUriHandler.current

@@ -1,5 +1,6 @@
 package com.ontop.inputapp.ui.result
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,8 @@ fun BmiResultScreen(
     val data = sharedViewModel.data
     val bmiResult by bmiResultViewModel.bmiResult.collectAsState()
     val bmiStatus by bmiResultViewModel.bmiStatus.collectAsState()
+
+    Log.d("BMIResultViewModel", "data Shared: ${data.value}")
 
     val context = LocalContext.current
 

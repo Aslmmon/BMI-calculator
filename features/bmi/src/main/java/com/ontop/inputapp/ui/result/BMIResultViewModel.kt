@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.ontop.data.model.BmiItem
 import com.ontop.inputapp.ui.input.UserInputSelection
-import com.ontop.repo.BmiItem
 import com.ontop.repo.BmiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
