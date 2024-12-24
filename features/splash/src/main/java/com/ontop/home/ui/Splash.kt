@@ -23,7 +23,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.ontop.home.R
 import kotlinx.coroutines.delay
 
-const val splashDelay = 2000L
+const val splashDelay = 4000L
 
 @Composable
 fun SplashScreen(

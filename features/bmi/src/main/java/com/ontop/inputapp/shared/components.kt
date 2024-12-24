@@ -363,10 +363,6 @@ private fun ArrowIcon(modifier: Modifier) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HeightContent(onHeightChosen: (Int) -> Unit) {
-
-    val configuration = LocalConfiguration.current
-    val itemWidth = 0.dp // Adjust based on your item width
-    val startPaddings = (configuration.screenWidthDp.dp - itemWidth) / 2
     LazyWrapperDetectingCenter(heightList, onChosenCenterItem = { centerItem ->
         onHeightChosen(centerItem)
 
@@ -384,7 +380,8 @@ fun HeightContent(onHeightChosen: (Int) -> Unit) {
             itemsIndexed(heightList) { index, numbers ->
                 val isHighlighted = highlightedItemIndex == index
                 val color =
-                    if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+                    if (isHighlighted) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.primary.copy(
                         alpha = 0.2f
                     )
                 Column(
@@ -401,7 +398,7 @@ fun HeightContent(onHeightChosen: (Int) -> Unit) {
                         color = color,
                         modifier = Modifier
                             .fillMaxHeight()  //fill the max height
-                            .width(0.5.dp)
+                            .width(if (isHighlighted) 4.dp else 0.5.dp)
                     )
                 }
 

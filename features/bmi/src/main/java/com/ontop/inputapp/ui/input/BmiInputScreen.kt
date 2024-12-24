@@ -44,7 +44,6 @@ fun BmiInputScreen(
         TitleScreen(stringResource(id = R.string.bmi_calculator_title))
         _gap(height = 10)
 
-
         ContentWithTitle(title = stringResource(R.string.gender_title), content = {
             GenderContent { gender ->
                 userInputViewModel.updateGender(gender)
