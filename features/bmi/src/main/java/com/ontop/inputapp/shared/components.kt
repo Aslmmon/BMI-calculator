@@ -67,7 +67,10 @@ import com.ontop.genders
 import com.ontop.heightList
 import com.ontop.inputapp.R
 import com.ontop.weightList
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -311,6 +314,7 @@ fun AgeContent(modifier: Modifier = Modifier, onAgeChosen: (Int) -> Unit) {
 }
 
 
+@OptIn(FlowPreview::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 private fun LazyWrapperDetectingCenter(
@@ -325,26 +329,23 @@ private fun LazyWrapperDetectingCenter(
     val itemWidth = 50.dp // Adjust based on your item width
     val startPaddings = (configuration.screenWidthDp.dp - itemWidth) / 2
     LaunchedEffect(listState) {
-        listState.scrollToItem(0, 10)
 
         snapshotFlow {
             val layoutInfo = listState.layoutInfo
-            val center = layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset / 2
             val visibleItems = layoutInfo.visibleItemsInfo
-//            val closestItem = visibleItems.minByOrNull { abs(it.offset + it.size / 2)  - center}
             val closestItem = visibleItems.minByOrNull { abs(it.offset + it.size / 2) }
             closestItem?.index
-        }.collect { index ->
-            highlightedItemIndex = index
+        }.debounce(300).collectLatest { index ->
+            coroutineScope.launch {
+                highlightedItemIndex = index
+            }
         }
     }
 
-    // In your item composable:
     if (!listState.isScrollInProgress) {
         coroutineScope.launch {
-            delay(200)
+            delay(600)
             onChosenCenterItem(listToGetCenterItemFrom[highlightedItemIndex ?: 0])
-
         }
     }
     onContentDrawn(highlightedItemIndex, listState, startPaddings)
@@ -365,16 +366,13 @@ private fun ArrowIcon(modifier: Modifier) {
 fun HeightContent(onHeightChosen: (Int) -> Unit) {
     LazyWrapperDetectingCenter(heightList, onChosenCenterItem = { centerItem ->
         onHeightChosen(centerItem)
-
     }, onContentDrawn = { highlightedItemIndex, listState, padding ->
-
 
         LazyRow(
             modifier = Modifier.height(100.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             state = listState,
             contentPadding = PaddingValues(start = padding, end = padding),
-
             flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
         ) {
             itemsIndexed(heightList) { index, numbers ->
@@ -384,23 +382,38 @@ fun HeightContent(onHeightChosen: (Int) -> Unit) {
                     else MaterialTheme.colorScheme.primary.copy(
                         alpha = 0.2f
                     )
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.Bottom
                 ) {
-                    Text(
-                        "$numbers",
-                        color = color,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(5.dp)
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "$numbers",
+                            color = color,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Divider(
+                            color = color,
+                            modifier = Modifier
+                                .height(50.dp)  //fill the max height
+                                .width(if (isHighlighted) 4.dp else 2.dp)
+                        )
+                    }
                     Divider(
-                        color = color,
+                        color = MaterialTheme.colorScheme.primary.copy(
+                            alpha = 0.2f
+                        ),
+                        thickness = 0.1.dp,
                         modifier = Modifier
-                            .fillMaxHeight()  //fill the max height
-                            .width(if (isHighlighted) 4.dp else 0.5.dp)
+                            .padding(start = 10.dp)
+                            .height(20.dp)
+                            .width(1.dp)
                     )
                 }
+
 
             }
         }

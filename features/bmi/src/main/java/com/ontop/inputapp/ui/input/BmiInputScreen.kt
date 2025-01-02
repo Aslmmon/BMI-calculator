@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ontop.heightVariants
 import com.ontop.inputapp.R
 import com.ontop.inputapp.shared.AgeContent
@@ -44,9 +43,6 @@ fun BmiInputScreen(
     ) {
         TitleScreen(stringResource(id = R.string.bmi_calculator_title))
         _Gap(height = 10)
-
-        _Gap()
-
         ContentWithTitle(title = stringResource(R.string.gender_title), content = {
             GenderContent { gender ->
                 userInputViewModel.updateGender(gender)
@@ -57,8 +53,6 @@ fun BmiInputScreen(
                 userInputViewModel.updateAge(age)
             })
         })
-
-
 
         ContentWithTitle(title = stringResource(R.string.height), content = {
             HeightContent(onHeightChosen = { height ->
