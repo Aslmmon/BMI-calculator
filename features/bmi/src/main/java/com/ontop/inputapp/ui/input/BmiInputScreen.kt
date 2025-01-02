@@ -1,5 +1,6 @@
 package com.ontop.inputapp.ui.input
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -59,7 +60,9 @@ fun BmiInputScreen(
                 userInputViewModel.updateHeight(height)
             })
         }, showContentVariants = true, variants = {
-            VariantContent(heightVariants)
+            VariantContent(heightVariants, variantChosen = { variant ->
+                userInputViewModel.updateHeightVariant(variant)
+            })
         })
 
 
@@ -69,7 +72,10 @@ fun BmiInputScreen(
             }
             )
         }, showContentVariants = true, variants = {
-            VariantContent(weightVariants)
+            VariantContent(weightVariants, variantChosen = { variant ->
+                userInputViewModel.updateWeightVariant(variant)
+
+            })
 
         })
 

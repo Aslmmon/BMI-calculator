@@ -2,6 +2,7 @@ package com.ontop.inputapp.ui.input
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ontop.Variants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +37,14 @@ class UserInputViewModel : ViewModel() {
         _userData.value = _userData.value.copy(weight = weight)
     }
 
+    fun updateHeightVariant(heightVariant: Variants) {
+        _userData.value = _userData.value.copy(heightVariantType = heightVariant)
+    }
+
+    fun updateWeightVariant(weightVariant: Variants) {
+        _userData.value = _userData.value.copy(weightVariantType = weightVariant)
+    }
+
     fun showLoadingThenClick(onNextClick: () -> Unit) {
         _loading.value = _loading.value.copy(isLoading = true)
         viewModelScope.launch {
@@ -51,10 +60,12 @@ class UserInputViewModel : ViewModel() {
 
 sealed class UserInputSelection {
     data class UserData(
-        var gender: Int? = null,
+        var gender: Int? = 0,
         var age: Int? = null,
         var height: Int? = null,
-        var weight: Int? = null
+        var weight: Int? = null,
+        var heightVariantType: Variants = Variants.CM,
+        var weightVariantType: Variants = Variants.KG
     )
 
     data class loading(var isLoading: Boolean)

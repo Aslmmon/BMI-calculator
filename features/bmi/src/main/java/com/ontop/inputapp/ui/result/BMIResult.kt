@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,7 +45,7 @@ fun BmiResultScreen(
     val bmiResult by bmiResultViewModel.bmiResult.collectAsState()
     val bmiStatus by bmiResultViewModel.bmiStatus.collectAsState()
 
-    Log.d("BMIResultViewModel", "data Shared: ${data.value}")
+
 
     val context = LocalContext.current
 
@@ -83,7 +83,7 @@ fun BmiResultScreen(
                 modifier = Modifier.padding(20.dp)
             ) {
                 Text(
-                    text = "BMI = $bmiResult KG/M2 \n ${bmiStatus.bmiStatus?.status}) ",
+                    text = "BMI = ${bmiResult.value} KG/M2 \n ${bmiStatus.bmiStatus?.status}) ",
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     color = Color.White

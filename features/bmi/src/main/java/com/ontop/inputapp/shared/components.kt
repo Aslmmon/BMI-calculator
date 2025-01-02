@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ontop.BMIIndexUrl
+import com.ontop.Variants
 import com.ontop.ageList
 import com.ontop.gender
 import com.ontop.genders
@@ -172,8 +173,8 @@ fun GenderView(
 
 @Composable
 fun Variant(
-    variantName: String,
-    onVariantClicked: () -> Unit,
+    variantName: Variants,
+    onVariantClicked: (Variants) -> Unit,
     isVariantChosen: Boolean
 ) {
 
@@ -188,7 +189,7 @@ fun Variant(
             .clickable(indication = null, interactionSource = remember {
                 MutableInteractionSource()
             }) {
-                onVariantClicked.invoke()
+                onVariantClicked.invoke(variantName)
             }
             .clip(RoundedCornerShape(11.dp))
             .background(if (isVariantChosen) MaterialTheme.colorScheme.primary else Color.White)
@@ -197,7 +198,7 @@ fun Variant(
         // Apply rounded corners
     ) {
         Text(
-            variantName,
+            variantName.value,
             color = if (isVariantChosen) Color.White else MaterialTheme.colorScheme.primary,
             fontSize = 10.sp,
         )
@@ -243,8 +244,10 @@ fun GenderContent(genderChosen: (Int) -> Unit) {
 }
 
 @Composable
-fun VariantContent(listToPopulateVariants: MutableList<String>) {
-    var selectdVariant by remember { mutableStateOf<Int>(0) }
+fun VariantContent(
+    listToPopulateVariants: MutableList<Variants>,
+    variantChosen: (Variants) -> Unit) {
+    var selectdVariant by rememberSaveable { mutableStateOf<Int>(0) }
     LazyRow(
 
         modifier = Modifier.fillMaxWidth(),
@@ -252,8 +255,9 @@ fun VariantContent(listToPopulateVariants: MutableList<String>) {
         contentPadding = PaddingValues(10.dp)
     ) {
         itemsIndexed(listToPopulateVariants) { index, item ->
-            Variant(item, onVariantClicked = {
+            Variant(item, onVariantClicked = { variantType->
                 selectdVariant = index
+                variantChosen(variantType)
             }, isVariantChosen = selectdVariant == index)
         }
     }
