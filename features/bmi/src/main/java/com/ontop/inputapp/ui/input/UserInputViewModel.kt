@@ -14,59 +14,53 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class UserInputViewModel : ViewModel() {
 
-    private val _userData = MutableStateFlow(UserInputSelection.UserData())
-    val userData: StateFlow<UserInputSelection.UserData> = _userData.asStateFlow()
+    private val _userData = MutableStateFlow(UserState.UserData())
+    val userData: StateFlow<UserState.UserData> = _userData.asStateFlow()
+
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading.asStateFlow()
 
 
-    private val _loading = MutableStateFlow(UserInputSelection.loading(false))
-    val loading: StateFlow<UserInputSelection.loading> = _loading.asStateFlow()
-
-    fun updateAge(age: Int) {
-        _userData.value = _userData.value.copy(age = age)
+    fun updateUserData(
+        age: Int? = null,
+        gender: Int? = null,
+        height: Int? = null,
+        weight: Int? = null,
+        heightVariant: Variants? = null,
+        weightVariant: Variants? = null
+    ) {
+        _userData.value = _userData.value.copy(
+            age = age ?: _userData.value.age,
+            gender = gender ?: _userData.value.gender,
+            height = height ?: _userData.value.height,
+            weight = weight ?: _userData.value.weight,
+            heightVariantType = heightVariant ?: _userData.value.heightVariantType,
+            weightVariantType = weightVariant ?: _userData.value.weightVariantType
+        )
     }
 
-    fun updateGender(gender: Int) {
-        _userData.value = _userData.value.copy(gender = gender)
-    }
 
-    fun updateHeight(height: Int) {
-        _userData.value = _userData.value.copy(height = height)
-    }
-
-    fun updateWeight(weight: Int) {
-        _userData.value = _userData.value.copy(weight = weight)
-    }
-
-    fun updateHeightVariant(heightVariant: Variants) {
-        _userData.value = _userData.value.copy(heightVariantType = heightVariant)
-    }
-
-    fun updateWeightVariant(weightVariant: Variants) {
-        _userData.value = _userData.value.copy(weightVariantType = weightVariant)
-    }
-
-    fun showLoadingThenClick(onNextClick: () -> Unit) {
-        _loading.value = _loading.value.copy(isLoading = true)
+    fun showLoading() {
+        _loading.value = true
         viewModelScope.launch {
-            delay(3000L)
-            _loading.value = _loading.value.copy(isLoading = false)
-            onNextClick.invoke()
+            delay(2500L)
+            stopLoading()
         }
-
     }
 
+    private fun stopLoading() {
+        _loading.value = false
+    }
 }
 
 
-sealed class UserInputSelection {
+sealed class UserState {
     data class UserData(
         var gender: Int? = 0,
         var age: Int? = null,
         var height: Int? = null,
         var weight: Int? = null,
         var heightVariantType: Variants = Variants.CM,
-        var weightVariantType: Variants = Variants.KG
+        var weightVariantType: Variants = Variants.KG,
     )
-
-    data class loading(var isLoading: Boolean)
 }

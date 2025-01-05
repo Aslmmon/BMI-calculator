@@ -1,7 +1,8 @@
 package com.ontop.inputapp.ui.input
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,7 +24,6 @@ import com.ontop.inputapp.shared.SharedViewModel
 import com.ontop.inputapp.shared.VariantContent
 import com.ontop.inputapp.shared.TitleScreen
 import com.ontop.inputapp.shared.WeightContent
-import com.ontop.inputapp.shared._Gap
 import com.ontop.weightVariants
 
 
@@ -31,11 +31,13 @@ import com.ontop.weightVariants
 fun BmiInputScreen(
     userInputViewModel: UserInputViewModel = hiltViewModel(),
     onCalculateClicked: () -> Unit = {},
-    sharedViewModel: SharedViewModel<UserInputSelection.UserData>
+    sharedViewModel: SharedViewModel<UserState.UserData>
 ) {
     val scrollState = rememberScrollState()
     val userData by userInputViewModel.userData.collectAsState()
     val loader by userInputViewModel.loading.collectAsState()
+
+
 
     Column(
         modifier = Modifier
@@ -43,49 +45,40 @@ fun BmiInputScreen(
             .verticalScroll(scrollState)
     ) {
         TitleScreen(stringResource(id = R.string.bmi_calculator_title))
-        _Gap(height = 10)
+        Spacer(modifier = Modifier.height(10.dp))
         ContentWithTitle(title = stringResource(R.string.gender_title), content = {
-            GenderContent { gender ->
-                userInputViewModel.updateGender(gender)
-            }
+            GenderContent { userInputViewModel.updateUserData(gender = it) }
         })
         ContentWithTitle(title = stringResource(R.string.age_title), content = {
-            AgeContent(onAgeChosen = { age ->
-                userInputViewModel.updateAge(age)
-            })
+            AgeContent(
+                modifier = Modifier,
+                onAgeChosen = { userInputViewModel.updateUserData(age = it) })
         })
 
         ContentWithTitle(title = stringResource(R.string.height), content = {
-            HeightContent(onHeightChosen = { height ->
-                userInputViewModel.updateHeight(height)
-            })
+            HeightContent { userInputViewModel.updateUserData(height = it) }
         }, showContentVariants = true, variants = {
-            VariantContent(heightVariants, variantChosen = { variant ->
-                userInputViewModel.updateHeightVariant(variant)
-            })
+            VariantContent(
+                heightVariants,
+                variantChosen = { userInputViewModel.updateUserData(heightVariant = it) })
         })
 
-
         ContentWithTitle(title = stringResource(R.string.weight), content = {
-            WeightContent(onWeightChosen = { weight ->
-                userInputViewModel.updateWeight(weight)
-            }
-            )
+            WeightContent(modifier = Modifier) { userInputViewModel.updateUserData(weight = it) }
         }, showContentVariants = true, variants = {
-            VariantContent(weightVariants, variantChosen = { variant ->
-                userInputViewModel.updateWeightVariant(variant)
-
-            })
+            VariantContent(weightVariants, variantChosen =
+            { userInputViewModel.updateUserData(weightVariant = it) })
 
         })
 
     }
     ButtonWithHyperLinkContent(
         buttonText = R.string.calculate_bmi,
-        isLoading = loader.isLoading,
+        isLoading = loader,
         onCalculateClicked = {
             sharedViewModel.setData(userData)
-            userInputViewModel.showLoadingThenClick(onCalculateClicked)
+            userInputViewModel.showLoading()
+            onCalculateClicked.invoke()
         }
     )
 

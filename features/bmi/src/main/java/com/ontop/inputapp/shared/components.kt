@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
@@ -38,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -159,7 +159,7 @@ fun GenderView(
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.width(4.dp)) // Add some space between icon and text
-            SVGloader(
+            SvgLoader(
                 modifier = modifier.size(20.dp, 20.dp),
                 iconResource = gender.icon,
                 tintColor = if (isGenderSelected) Color.White else MaterialTheme.colorScheme.primary
@@ -209,7 +209,7 @@ fun Variant(
 
 
 @Composable
-fun SVGloader(
+fun SvgLoader(
     modifier: Modifier = Modifier,
     iconResource: Int,
     iconDesc: String = "",
@@ -226,7 +226,7 @@ fun SVGloader(
 
 @Composable
 fun GenderContent(genderChosen: (Int) -> Unit) {
-    var selectedGender by remember { mutableStateOf<Int>(0) }
+    var selectedGender by remember { mutableIntStateOf(0) }
 
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -246,8 +246,9 @@ fun GenderContent(genderChosen: (Int) -> Unit) {
 @Composable
 fun VariantContent(
     listToPopulateVariants: MutableList<Variants>,
-    variantChosen: (Variants) -> Unit) {
-    var selectdVariant by rememberSaveable { mutableStateOf<Int>(0) }
+    variantChosen: (Variants) -> Unit
+) {
+    var selectedVariant by rememberSaveable { mutableIntStateOf(0) }
     LazyRow(
 
         modifier = Modifier.fillMaxWidth(),
@@ -255,10 +256,10 @@ fun VariantContent(
         contentPadding = PaddingValues(10.dp)
     ) {
         itemsIndexed(listToPopulateVariants) { index, item ->
-            Variant(item, onVariantClicked = { variantType->
-                selectdVariant = index
+            Variant(item, onVariantClicked = { variantType ->
+                selectedVariant = index
                 variantChosen(variantType)
-            }, isVariantChosen = selectdVariant == index)
+            }, isVariantChosen = selectedVariant == index)
         }
     }
 }
@@ -287,7 +288,7 @@ fun AgeContent(modifier: Modifier = Modifier, onAgeChosen: (Int) -> Unit) {
             ArrowIcon(modifier)
             LazyWrapperDetectingCenter(ageList, onChosenCenterItem = { centerItem ->
                 onAgeChosen(centerItem)
-            }, onContentDrawn = { highlightedItemIndex, listState, padding ->
+            }, onContentDrawn = { highlightedItemIndex, listState, _ ->
 
 
                 LazyColumn(
@@ -296,6 +297,7 @@ fun AgeContent(modifier: Modifier = Modifier, onAgeChosen: (Int) -> Unit) {
                     contentPadding = PaddingValues(top = 35.dp, bottom = 35.dp),
                     flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
                 ) {
+
                     itemsIndexed(ageList) { index, numbers ->
                         val isHighlighted = highlightedItemIndex == index
                         val color =
@@ -333,7 +335,9 @@ private fun LazyWrapperDetectingCenter(
     val itemWidth = 50.dp // Adjust based on your item width
     val startPaddings = (configuration.screenWidthDp.dp - itemWidth) / 2
     LaunchedEffect(listState) {
-
+//        listState.animateScrollToItem(
+//            index = targetItemIndex,
+//        )
         snapshotFlow {
             val layoutInfo = listState.layoutInfo
             val visibleItems = layoutInfo.visibleItemsInfo
@@ -399,14 +403,14 @@ fun HeightContent(onHeightChosen: (Int) -> Unit) {
                             color = color,
                             fontWeight = FontWeight.Bold,
                         )
-                        Divider(
+                        androidx.compose.material.Divider(
                             color = color,
                             modifier = Modifier
                                 .height(50.dp)  //fill the max height
                                 .width(if (isHighlighted) 4.dp else 2.dp)
                         )
                     }
-                    Divider(
+                    androidx.compose.material.Divider(
                         color = MaterialTheme.colorScheme.primary.copy(
                             alpha = 0.2f
                         ),
@@ -471,7 +475,6 @@ fun ButtonWithHyperLinkContent(
     buttonText: Int,
     isLoading: Boolean = false,
     onCalculateClicked: () -> Unit,
-
     urlToBeOpend: String = BMIIndexUrl,
 ) {
     val uriHandler = LocalUriHandler.current

@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.ontop.Variants
 import com.ontop.data.model.BmiItem
-import com.ontop.inputapp.ui.input.UserInputSelection
+import com.ontop.inputapp.ui.input.UserState
 import com.ontop.repo.BmiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +26,7 @@ class BMIResultViewModel : ViewModel() {
 
     private var bmiRepository = BmiRepository()
 
-    fun calculateBMi(userData: UserInputSelection.UserData, context: Context) {
+    fun calculateBMi(userData: UserState.UserData, context: Context) {
         val result = bmiRepository.getBmiResult(context)
         when (userData.heightVariantType) {
             /**

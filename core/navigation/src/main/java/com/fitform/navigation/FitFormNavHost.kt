@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ontop.home.ui.SplashScreen
 import com.ontop.inputapp.shared.SharedViewModel
 import com.ontop.inputapp.ui.input.BmiInputScreen
-import com.ontop.inputapp.ui.input.UserInputSelection
+import com.ontop.inputapp.ui.input.UserState
 import com.ontop.inputapp.ui.result.BmiResultScreen
 
 const val SPLASH_ROUTE = "splashroute"
@@ -24,7 +24,7 @@ fun FitFormNavHost(
     startDestination: String = SPLASH_ROUTE,
     navController: NavHostController = rememberNavController()
 ) {
-    val sharedViewModel = viewModel<SharedViewModel<UserInputSelection.UserData>>()
+    val sharedViewModel = viewModel<SharedViewModel<UserState.UserData>>()
 
     NavHost(
         navController = navController,
