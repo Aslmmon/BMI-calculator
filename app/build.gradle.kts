@@ -10,7 +10,7 @@ android {
     namespace = "com.fitform.bmi"
     compileSdk = 34
 
-    configurations.implementation{
+    configurations.implementation {
         exclude(group = "com.intellij", module = "annotations")
     }
     defaultConfig {
@@ -29,10 +29,12 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -78,4 +80,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    implementation (libs.gson)
+
 }

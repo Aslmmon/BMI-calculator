@@ -144,7 +144,7 @@ fun BmiResultScreen(
                 ) {
 
                     Text(
-                        text = "Healthy weight for the height: ${healthyWeight.value} kgs ",
+                        text = "Healthy weight for the height: ${healthyWeight.value} Kg  ",
                         color = MaterialTheme.colorScheme.surface, fontWeight = FontWeight.Bold,
                         fontSize = 12.sp
                     )

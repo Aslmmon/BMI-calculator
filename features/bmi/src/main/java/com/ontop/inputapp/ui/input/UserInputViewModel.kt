@@ -1,5 +1,6 @@
 package com.ontop.inputapp.ui.input
 
+import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ontop.Variants
@@ -55,6 +56,7 @@ class UserInputViewModel : ViewModel() {
 
 
 sealed class UserState {
+    @Keep
     data class UserData(
         var gender: Int? = 0,
         var age: Int? = null,

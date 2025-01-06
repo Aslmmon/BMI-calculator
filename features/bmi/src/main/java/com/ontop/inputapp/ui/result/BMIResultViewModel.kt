@@ -3,6 +3,7 @@ package com.ontop.inputapp.ui.result
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ontop.Variants
@@ -55,7 +56,7 @@ class BMIResultViewModel : ViewModel() {
                     HealthyWeight(healthWeight ?: 0)
                 )
             } catch (e: Exception) {
-                _bmiState.value = BMIState.Error("Error calculating BMI")
+                _bmiState.value = BMIState.Error("Error calculating BMI ${e.message}")
             }
         }
     }
@@ -82,6 +83,7 @@ class BMIResultViewModel : ViewModel() {
 }
 
 sealed class BMIState {
+    @Keep
     data class Success(
         val bmiResult: BMIResult,
         val bmiStatus: BMIStatus,
@@ -89,9 +91,16 @@ sealed class BMIState {
     ) : BMIState()
 
     object Loading : BMIState()
+
+    @Keep
     data class Error(val message: String) : BMIState()
 }
 
+@Keep
 data class BMIResult(val value: String = "0")
+
+@Keep
 data class HealthyWeight(val value: Int)
+
+@Keep
 data class BMIStatus(val bmiItem: BmiItem? = null)
