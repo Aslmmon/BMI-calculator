@@ -10,6 +10,9 @@ android {
     namespace = "com.fitform.bmi"
     compileSdk = 34
 
+    configurations.implementation{
+        exclude(group = "com.intellij", module = "annotations")
+    }
     defaultConfig {
         applicationId = "com.fitform.bmi"
         minSdk = 24
@@ -50,6 +53,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {

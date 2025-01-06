@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,10 +45,7 @@ fun BmiResultScreen(
 
 ) {
     val data = sharedViewModel.data
-    val bmiResult by bmiResultViewModel.bmiResult.collectAsState()
-    val bmiStatus by bmiResultViewModel.bmiStatus.collectAsState()
-
-
+    val bmiState by bmiResultViewModel.bmiState.collectAsState()
     val context = LocalContext.current
 
 
@@ -55,92 +55,133 @@ fun BmiResultScreen(
 
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 10.dp),
-
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Result",
-            color = MaterialTheme.colorScheme.surface,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
-        )
-        _Gap()
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(15.dp))
-                .background(MaterialTheme.colorScheme.secondary)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center // Center content of the Box
-        ) {
-
+    when (bmiState) {
+        is BMIState.Loading -> {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(20.dp)
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "BMI = ${bmiResult.value} KG/M2 \n ${bmiStatus.bmiStatus?.status}) ",
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    color = Color.White
-                )
-                _Gap()
-                Text(
-                    text = bmiStatus.bmiStatus?.summary ?: "",
-                    fontSize = 12.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(fontStyle = FontStyle.Italic)
-
-                )
-                _Gap()
-
-                Text(
-                    text = bmiStatus.bmiStatus?.recommendation ?: "",
-                    fontSize = 12.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(fontStyle = FontStyle.Italic)
-
-                )
-
+                LoadingScreen()
             }
         }
 
-        _Gap()
+        is BMIState.Success -> {
+            val bmiResult = (bmiState as BMIState.Success).bmiResult
+            val bmiStatus = (bmiState as BMIState.Success).bmiStatus
+            val healthyWeight = (bmiState as BMIState.Success).healthyWeight
 
-        Box(
-            modifier = Modifier
-                .border(
-                    width = 0.5.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(10.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 10.dp),
+
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Result",
+                    color = MaterialTheme.colorScheme.surface,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
                 )
-                .padding(20.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(11.dp)),
-            contentAlignment = Alignment.Center // Center content of the Box
-        ) {
+                _Gap()
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(MaterialTheme.colorScheme.secondary)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center // Center content of the Box
+                ) {
 
-            Text(
-                text = "Healthy weight for the height: 52.2 kgs - 70.6 kgs",
-                color = MaterialTheme.colorScheme.surface, fontWeight = FontWeight.Bold,
-                fontSize = 12.sp
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        Text(
+                            text = "BMI = ${bmiResult.value} KG/M2 \n ${bmiStatus.bmiItem?.status}) ",
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            color = Color.White
+                        )
+                        _Gap()
+                        Text(
+                            text = bmiStatus.bmiItem?.summary ?: "",
+                            fontSize = 12.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(fontStyle = FontStyle.Italic)
+
+                        )
+                        _Gap()
+
+                        Text(
+                            text = bmiStatus.bmiItem?.recommendation ?: "",
+                            fontSize = 12.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(fontStyle = FontStyle.Italic)
+
+                        )
+
+                    }
+                }
+
+                _Gap()
+
+                Box(
+                    modifier = Modifier
+                        .border(
+                            width = 0.5.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .padding(20.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(11.dp)),
+                    contentAlignment = Alignment.Center // Center content of the Box
+                ) {
+
+                    Text(
+                        text = "Healthy weight for the height: ${healthyWeight.value} kgs ",
+                        color = MaterialTheme.colorScheme.surface, fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp
+                    )
+
+
+                }
+
+            }
+
+            ButtonWithHyperLinkContent(
+                buttonText = R.string.new_calculate,
+                onCalculateClicked = onReCalculateClicked
             )
-
-
         }
 
+        is BMIState.Error -> {
+            val errorMessage = (bmiState as BMIState.Error).message
+            Text("Error: $errorMessage", color = Color.Red)
+        }
     }
 
-    ButtonWithHyperLinkContent(
-        buttonText = R.string.new_calculate,
-        onCalculateClicked = onReCalculateClicked
-    )
 
+}
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .height(120.dp)
+            .width(120.dp)
+            .border(
+                width = 0.5.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(10.dp)
+            ), // Set background color
+        contentAlignment = Alignment.Center // Center content
+    ) {
+        CircularProgressIndicator(strokeWidth = 1.5.dp, color = MaterialTheme.colorScheme.primary)
+    }
 }

@@ -4,6 +4,7 @@ import com.ontop.Variants
 import com.ontop.inputapp.ui.input.UserInputViewModel
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -14,7 +15,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 

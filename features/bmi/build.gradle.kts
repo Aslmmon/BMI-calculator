@@ -51,7 +51,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(project(":core:domain"))
-    implementation( libs.numberpicker)
+    implementation(libs.numberpicker)
     implementation(libs.androidx.room.compiler)
 
 

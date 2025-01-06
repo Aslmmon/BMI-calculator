@@ -4,73 +4,94 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ontop.Variants
 import com.ontop.data.model.BmiItem
 import com.ontop.inputapp.ui.input.UserState
 import com.ontop.repo.BmiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 
 @SuppressLint("DefaultLocale")
 @HiltViewModel
 class BMIResultViewModel : ViewModel() {
 
-    private val _bmiStatus = MutableStateFlow(BMiStatus.bmiStatus(null))
-    val bmiStatus: StateFlow<BMiStatus.bmiStatus> = _bmiStatus.asStateFlow()
-
-    private val _bmiResult = MutableStateFlow(BMiStatus.result("0"))
-    val bmiResult: StateFlow<BMiStatus.result> = _bmiResult.asStateFlow()
+    private val _bmiState = MutableStateFlow<BMIState>(BMIState.Loading)
+    val bmiState: StateFlow<BMIState> = _bmiState.asStateFlow()
 
     private var bmiRepository = BmiRepository()
 
     fun calculateBMi(userData: UserState.UserData, context: Context) {
-        val result = bmiRepository.getBmiResult(context)
-        when (userData.heightVariantType) {
-            /**
-             * if height in inches will convert to CM then calculate BMI
-             */
-            Variants.Inches -> userData.height =
-                userData.height?.let { inchesToCentimeters(it.toDouble()) }?.toInt()
 
-            /**
-             * if weight in Pound will convert to KG then calculate BMI
-             */
-            Variants.Pounds -> userData.weight =
-                userData.weight?.let { poundsToKilograms(it.toDouble()) }?.toInt()
+        viewModelScope.launch {
+            _bmiState.value = BMIState.Loading
+            delay(1000L)
+            try {
+                val result = bmiRepository.getBmiResult(context)
+                userData.height = getHeightInCm(userData)
+                when (userData.heightVariantType) {
+                    /**
+                     * if weight in Pound will convert to KG then calculate BMI
+                     */
+                    Variants.Pounds -> userData.weight =
+                        userData.weight?.let { poundsToKilograms(it.toDouble()) }?.toInt()
 
-            else -> {}
+                    else -> {}
+                }
+                val heightInMeters = userData.height?.div(100.0) ?: 0.0
+                val bmi = userData.weight!!.div((heightInMeters * heightInMeters))
+                val bmiResult =
+                    result.find { bmi in it.rangeFrom.toDouble()..it.rangeTo.toDouble() }
+                val healthWeight = userData.height?.minus(100)
+
+                _bmiState.value = BMIState.Success(
+                    BMIResult(String.format("%.2f", bmi)),
+                    BMIStatus(bmiResult),
+                    HealthyWeight(healthWeight ?: 0)
+                )
+            } catch (e: Exception) {
+                _bmiState.value = BMIState.Error("Error calculating BMI")
+            }
         }
-        Log.d("BMIResultViewModel", "data Shared: ${userData.toString()}")
-
-        val heightInMeters = userData.height?.div(100.0) ?: 0.0
-        val bmi = userData.weight!!.div((heightInMeters * heightInMeters))
-        val bmiResult = result.find { bmi in it.rangeFrom.toDouble()..it.rangeTo.toDouble() }
-        _bmiResult.value = BMiStatus.result(String.format("%.2f", bmi))
-        _bmiStatus.value = BMiStatus.bmiStatus(bmiResult)
-
     }
+
 
     private fun inchesToCentimeters(inches: Double): Double {
-        val centimeters = inches * 2.54
-        Log.d("BMIResultViewModel", "new height : $centimeters")
-
-        return String.format("%.2f", centimeters).toDouble() // Round to 2 decimal places
+        return inches * 2.54
     }
+
 
     private fun poundsToKilograms(pounds: Double): Double {
-        val kilograms = pounds * 0.453592
-        Log.d("BMIResultViewModel", "new weight : $kilograms")
-        return String.format("%.2f", kilograms).toDouble() // Round to 2 decimal places
+        return pounds * 0.453592
     }
 
+
+    private fun getHeightInCm(userData: UserState.UserData): Int? {
+        return when (userData.heightVariantType) {
+            Variants.Inches -> userData.height?.let { inchesToCentimeters(it.toDouble()).toInt() }
+            else -> userData.height
+        }
+    }
+
+
 }
 
+sealed class BMIState {
+    data class Success(
+        val bmiResult: BMIResult,
+        val bmiStatus: BMIStatus,
+        val healthyWeight: HealthyWeight
+    ) : BMIState()
 
-sealed class BMiStatus {
-    data class result(val value: String = "0") : BMiStatus()
-    data class bmiStatus(val bmiStatus: BmiItem? = null) : BMiStatus()
-
+    object Loading : BMIState()
+    data class Error(val message: String) : BMIState()
 }
+
+data class BMIResult(val value: String = "0")
+data class HealthyWeight(val value: Int)
+data class BMIStatus(val bmiItem: BmiItem? = null)
