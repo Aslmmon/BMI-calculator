@@ -7,14 +7,14 @@ plugins {
 }
 
 android {
-    namespace = "com.fitform.bmi"
+    namespace = "com.aslmmovic.fitformbmi"
     compileSdk = 34
 
     configurations.implementation {
         exclude(group = "com.intellij", module = "annotations")
     }
     defaultConfig {
-        applicationId = "com.fitform.bmi"
+        applicationId = "com.aslmmovic.fitformbmi"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -80,6 +80,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
-    implementation (libs.gson)
+    implementation(libs.gson)
 
 }

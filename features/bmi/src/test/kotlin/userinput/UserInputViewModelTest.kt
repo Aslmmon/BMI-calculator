@@ -1,4 +1,4 @@
-package com.fitform.bmi.userinput
+package com.aslmmovic.fitformbmi.userinput
 
 import com.ontop.Variants
 import com.ontop.inputapp.ui.input.UserInputViewModel

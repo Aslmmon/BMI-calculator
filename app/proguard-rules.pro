@@ -58,7 +58,7 @@
 -keep class com.google.gson.examples.android.model.** { *; }
 
 # Keep the no-args constructor of the deserialized class
--keepclassmembers class com.fitform.bmi.FitFormApplication {
+-keepclassmembers class com.aslmmovic.fitformbmi.FitFormApplication {
   <init>();
 }
 -keepdirectories app/*

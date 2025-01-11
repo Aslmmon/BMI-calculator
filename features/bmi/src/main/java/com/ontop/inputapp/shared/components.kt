@@ -36,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -320,6 +321,43 @@ fun AgeContent(modifier: Modifier = Modifier, onAgeChosen: (Int) -> Unit) {
 }
 
 
+//@OptIn(FlowPreview::class)
+//@SuppressLint("CoroutineCreationDuringComposition")
+//@Composable
+//private fun LazyWrapperDetectingCenter(
+//    listToGetCenterItemFrom: List<Int>,
+//    onChosenCenterItem: (Int) -> Unit,
+//    onContentDrawn: @Composable (Int?, LazyListState, Dp) -> Unit
+//) {
+//    val listState = rememberLazyListState()
+//    val coroutineScope = rememberCoroutineScope()
+//    var highlightedItemIndex by remember { mutableStateOf<Int?>(null) }
+//    val configuration = LocalConfiguration.current
+//    val itemWidth = 50.dp // Adjust based on your item width
+//    val startPaddings = (configuration.screenWidthDp.dp - itemWidth) / 2
+//    LaunchedEffect(listState) {
+//        snapshotFlow {
+//            val layoutInfo = listState.layoutInfo
+//            val visibleItems = layoutInfo.visibleItemsInfo
+//            val closestItem = visibleItems.minByOrNull { abs(it.offset + it.size / 2) }
+//            closestItem?.index
+//        }.debounce(300).collectLatest { index ->
+//            coroutineScope.launch {
+//                highlightedItemIndex = index
+//            }
+//        }
+//    }
+//
+//    if (!listState.isScrollInProgress) {
+//        coroutineScope.launch {
+//            delay(600)
+//            onChosenCenterItem(listToGetCenterItemFrom[highlightedItemIndex ?: 0])
+//        }
+//    }
+//    onContentDrawn(highlightedItemIndex, listState, startPaddings)
+//}
+
+
 @OptIn(FlowPreview::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -329,36 +367,38 @@ private fun LazyWrapperDetectingCenter(
     onContentDrawn: @Composable (Int?, LazyListState, Dp) -> Unit
 ) {
     val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
     var highlightedItemIndex by remember { mutableStateOf<Int?>(null) }
-    val configuration = LocalConfiguration.current
-    val itemWidth = 50.dp // Adjust based on your item width
-    val startPaddings = (configuration.screenWidthDp.dp - itemWidth) / 2
+
     LaunchedEffect(listState) {
-//        listState.animateScrollToItem(
-//            index = targetItemIndex,
-//        )
         snapshotFlow {
             val layoutInfo = listState.layoutInfo
-            val visibleItems = layoutInfo.visibleItemsInfo
-            val closestItem = visibleItems.minByOrNull { abs(it.offset + it.size / 2) }
+            val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+            val closestItem = layoutInfo.visibleItemsInfo.minByOrNull {
+                abs((it.offset + it.size / 2) - viewportCenter)
+            }
             closestItem?.index
         }.debounce(300).collectLatest { index ->
-            coroutineScope.launch {
-                highlightedItemIndex = index
+            highlightedItemIndex = index
+        }
+    }
+
+    val chosenCenterItem by remember(highlightedItemIndex, listToGetCenterItemFrom) {
+        derivedStateOf {
+            if (listToGetCenterItemFrom.isNotEmpty() && highlightedItemIndex != null) {
+                listToGetCenterItemFrom[highlightedItemIndex!!]
+            } else {
+                -1 // Or some other default value
             }
         }
     }
 
-    if (!listState.isScrollInProgress) {
-        coroutineScope.launch {
-            delay(600)
-            onChosenCenterItem(listToGetCenterItemFrom[highlightedItemIndex ?: 0])
-        }
+    LaunchedEffect(chosenCenterItem) {
+        onChosenCenterItem(chosenCenterItem)
     }
-    onContentDrawn(highlightedItemIndex, listState, startPaddings)
-}
 
+    onContentDrawn(highlightedItemIndex, listState, 0.dp) // startPaddings removed}
+
+}
 @Composable
 private fun ArrowIcon(modifier: Modifier) {
     Icon(
