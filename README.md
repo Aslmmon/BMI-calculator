@@ -32,8 +32,7 @@ Demo               |
 - Hilt for Dependency Injection .
 - Compose Navigation  .
 - MVI State Management Arch.  .
-- Light && Dark Mode support .
-- 
+
 
 ## How to use ? :thinking:
 Clone and Run main branch  as it contains all latest work done && always merged with latest work 
