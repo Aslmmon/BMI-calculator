@@ -32,6 +32,7 @@ Demo               |
 - Hilt for Dependency Injection .
 - Compose Navigation  .
 - MVI State Management Arch.  .
+- Lottie Splash
 
 
 ## How to use ? :thinking:
